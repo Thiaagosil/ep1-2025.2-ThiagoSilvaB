@@ -1,5 +1,5 @@
 package models.internacao;
 
-public class internacao {
+public class Internacao {
     
 }
