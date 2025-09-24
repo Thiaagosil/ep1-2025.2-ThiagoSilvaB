@@ -1,19 +1,23 @@
-package models.medico;
+package models.pessoa.medico;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
+import models.pessoa.Pessoa;
 
-public class Medico {
-    private String nome;
+
+public class Medico extends Pessoa {
     private int CRM;
     private List<Especialidade> especialidades;
     private double CustoConsulta;
     private List<LocalDateTime> agenda;
 
 
-    public Medico(String nome, int CRM, Especialidade especialidade, double CustoConsulta) {
-        this.nome = nome;
+    public Medico(String nome, String cpf, int CRM, Especialidade especialidade, double CustoConsulta) {
+        
+        super(nome, cpf);
         this.CRM = CRM;
 
         this.especialidades = new ArrayList<>();
@@ -29,25 +33,10 @@ public class Medico {
         this.especialidades.add(especialidade);
     }
 
-    //Marcar horário na agenda
-    // public void adicionarHorario(LocalDateTime horario){
-    //     if (horario != null && !agenda.contains(horario)) {
-    //         agenda.add(horario);
-    //     }
-    // }
-
-
 
 
     // Getters e Setters
 
-     public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 
     public int getCRM() {
         return CRM;
@@ -57,12 +46,18 @@ public class Medico {
         this.CRM = CRM;
     }
 
+    public double getCustoConsulta(){
+        return CustoConsulta;
+    }
+
+    public void setCustoConsulta(double CustoConsulta){
+        this.CustoConsulta = CustoConsulta;
+    }
+
 
     // cópia da lista de especialidades
     public List<Especialidade> getEspecialidades() {
         return new ArrayList<>(this.especialidades);
     }
-
-
 
 }

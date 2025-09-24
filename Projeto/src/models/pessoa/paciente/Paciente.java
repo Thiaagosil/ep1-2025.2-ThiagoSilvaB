@@ -1,20 +1,19 @@
-package models.paciente;
+package models.pessoa.paciente;
 
 import java.util.ArrayList;
 import java.util.List;
 import models.consulta.Consulta;
 import models.internacao.Internacao;
+import models.pessoa.Pessoa;
 
-public class Paciente {
-    private String nome;
-    private String cpf;
+public class Paciente extends Pessoa {
+  
     private int idade;
     private List<Consulta> historicoConsultas;
     private List<Internacao> historicoInternacoes;
 
     public Paciente(String nome, String cpf, int idade) {
-        this.nome = nome;
-        this.cpf = cpf;
+        super(nome, cpf);
         this.idade = idade;
         this.historicoConsultas = new ArrayList<>();
         this.historicoInternacoes = new ArrayList<>();
@@ -22,21 +21,7 @@ public class Paciente {
     
     // Getters e Setters
 
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
+   
 
     public int getIdade() {
         return idade;
