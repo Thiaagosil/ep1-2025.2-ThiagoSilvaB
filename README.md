@@ -62,7 +62,7 @@ Desenvolvimento de um sistema de gerenciamento hospitalar utilizando os conceito
 
 ## Contato
 
-- [Opcional: E-mail pessoal do aluno.]
+- 2005thiagosilva@gmail.com
 
 ---
 
