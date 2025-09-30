@@ -34,4 +34,8 @@ public class PacienteService {
         }
         
     }
+
+    Paciente buscarPacientePorCpf(String cpfPaciente) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

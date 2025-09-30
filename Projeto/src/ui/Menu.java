@@ -1,6 +1,7 @@
 package ui;
 import java.util.Scanner;
 import models.pessoa.paciente.Paciente;
+import services.ConsultaService;
 import services.MedicoService;
 import services.PacienteService;
 
@@ -10,7 +11,7 @@ public class Menu {
 
         PacienteService pacienteService = new PacienteService();
         MedicoService medicoService = new MedicoService();
-
+        ConsultaService consultaService = new ConsultaService(pacienteService, medicoService);
                 
 
         // consulta..
@@ -48,9 +49,9 @@ public class Menu {
                     gerenciarMedicos(sc, medicoService);
                     break;
 
-                // case 3:
-                //     gerenciarPacientes(sc, pacientes);
-                //     break;
+                case 3:
+                    gerenciarConsultas(sc, consultaService);
+                    break;
 
                 // case 4:
                 //     gerenciarPacientes(sc, pacientes);
@@ -136,6 +137,24 @@ public class Menu {
             sc.nextLine();
             
         }
+
+    }
+
+
+    public static void gerenciarConsultas(Scanner sc, ConsultaService consultaService){
+        int opcaoConsulta = -1;
+
+        while(opcaoConsulta != 0){
+            System.out.println("\n===============Tela Consulta===============");
+            System.out.println("\nEscolha uma Opção :");
+
+            System.out.println("1- Marcar Consulta");
+            
+            System.out.println("4- Listar Consultas Cadastradas");
+            System.out.println("0- Voltar ao Menu Principal");
+          
+        }
+
 
     }
 

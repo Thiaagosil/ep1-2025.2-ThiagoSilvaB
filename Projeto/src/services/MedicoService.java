@@ -42,4 +42,8 @@ public class MedicoService {
 
     }
 
+    Medico buscarMedicoPorCpf(String cpfMedico) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }
