@@ -8,7 +8,7 @@ public enum Especialidade {
     DERMATOLOGIA("Dermatologia");
 
 
-    private String descricao;
+    private final String descricao;
 
     Especialidade(String descricao){
         this.descricao = descricao;

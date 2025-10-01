@@ -1,16 +1,17 @@
 package models.internacao;
 
+
 import java.time.LocalDateTime;
 import models.pessoa.medico.Medico;
 import models.pessoa.paciente.Paciente;
 
 public class Internacao {
 
-    private Paciente paciente;
-    private Medico medicoResponsavel;
-    private LocalDateTime dataEntrada;
+    private final Paciente paciente;
+    private final Medico medicoResponsavel;
+    private final LocalDateTime dataEntrada;
     private LocalDateTime dataSaida;
-    private Quarto quarto;
+    private final Quarto quarto;
     private double custoInternacao;
     private boolean estaCancelada;
     
@@ -29,8 +30,61 @@ public class Internacao {
   }
 
 
-
   //getters
+
+        public Paciente getPaciente(){
+            return paciente;
+        }
+
+        
+        public Medico getMedicoResponsavel(){
+            return medicoResponsavel;
+        }
+
+
+        public LocalDateTime getDataEntrada(){
+            return dataEntrada;
+        }
+
+
+        public LocalDateTime getDataSaida(){
+            return dataSaida;
+        }
+
+
+        public Quarto getQuarto(){
+            return quarto;
+        }
+
+        
+        public double getCustoInternacao(){
+            return custoInternacao;
+        }
+
+
+        public boolean isEstaCancelada(){
+            return estaCancelada;
+        }
+
+
+
+        //setters - calculo
+
+        public void setDataSaida(LocalDateTime dataSaida){
+            this.dataSaida = dataSaida;
+        }
+
+
+        public void setCustoInternacao(double custoInternacao){
+                this.custoInternacao = custoInternacao;
+        }
+
+
+        public void setEstaCancelada(boolean estaCancelada){
+                this.estaCancelada = estaCancelada;
+        }
+
+
 
 
 }
