@@ -12,14 +12,14 @@ public class Paciente extends Pessoa {
     private int idade;
     private List<Consulta> historicoConsultas;
     private List<Internacao> historicoInternacoes;
-    private Internacao internacaoAtual;
+    private Optional<Internacao> internacaoAtual;
 
     public Paciente(String nome, String cpf, int idade) {
         super(nome, cpf);
         this.idade = idade;
         this.historicoConsultas = new ArrayList<>();
         this.historicoInternacoes = new ArrayList<>();
-         this.internacaoAtual = null;
+        this.internacaoAtual = Optional.empty(); 
     }
     
     // Getters e Setters
@@ -53,12 +53,12 @@ public class Paciente extends Pessoa {
         this.historicoInternacoes.add(internacao);
     }
 
-    public Optional<Internacao> getInternacaoAtual() {
-        return Optional.ofNullable(internacaoAtual);
+  public void setInternacaoAtual(Optional<Internacao> internacaoAtual) {
+    this.internacaoAtual = internacaoAtual;
     }
 
-     public void setInternacaoAtual(Internacao internacaoAtual) {
-        this.internacaoAtual = internacaoAtual;
+     public Optional<Internacao> getInternacaoAtual() {
+        return internacaoAtual;
     }
 
 }

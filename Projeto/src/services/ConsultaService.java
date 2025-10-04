@@ -18,8 +18,8 @@ public class ConsultaService {
     private List<Consulta> consultas;
 
     //Dependência, buscar em MedicoService e PacienteService
-    private PacienteService  pacienteService;
-    private MedicoService  medicoService;
+    private PacienteService pacienteService;
+    private MedicoService medicoService;
 
     //construtor para injetar a dependência.
     public ConsultaService(PacienteService pacienteService, MedicoService medicoService){
@@ -111,27 +111,30 @@ public class ConsultaService {
                     ConsultaStatus status = ConsultaStatus.valueOf(dados[3]);
 
                     // Buscar os Objetos pelo CPF.
-                    Paciente paciente = pacienteService.buscarPacientePorCpf(cpfPaciente);
-                    Medico medico = medicoService.buscarMedicoPorCpf(cpfMedico);
+              
+                    var pacienteOpt = pacienteService.buscarPacientePorCpf(cpfPaciente);
+                    var medicoOpt = medicoService.buscarMedicoPorCpf(cpfMedico);
 
-                    if(paciente == null || medico == null){
+                    if(pacienteOpt.isPresent() && medicoOpt.isPresent()){
+                        
+                        Paciente paciente = pacienteOpt.get();
+                        Medico medico = medicoOpt.get();
+                        
                         Consulta c = new Consulta(paciente, medico, dataHora);
                         c.setStatus(status);
 
                         listaCarregada.add(c);
 
-                        paciente.adicionarConsulta(c);  // adicionar consulta no historico do paciente
+                        paciente.adicionarConsulta(c); 
 
-                    }
-                    
-                    else 
+                    } else 
                     {
-                        System.err.println("Erro, Paciente ou Médico não encontrado ao carregar consulta.");
-                   }
+                         System.err.println("Erro, Paciente ou Médico não encontrado ao carregar consulta. Linha ignorada.");
+                    }
                 }
             }
         }
-     catch (IOException e) {
+      catch (IOException e) {
             System.err.println("Erro ao carregar consultas do arquivo: " + e.getMessage());
         } catch (Exception e) {
              System.err.println("Erro de formato ao carregar consultas: " + e.getMessage());
@@ -139,7 +142,7 @@ public class ConsultaService {
         return listaCarregada;
     }
 
-     public List<Consulta> listarTodasConsultas() {
-        return new ArrayList<>(this.consultas); // Retorna uma cópia de todas as consultas
+      public List<Consulta> listarTodasConsultas() {
+        return new ArrayList<>(this.consultas); //retorna uma cópia de todas as consultas
     }
 }
