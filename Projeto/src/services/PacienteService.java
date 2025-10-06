@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional; 
 import models.pessoa.paciente.Paciente;
 
@@ -15,6 +17,7 @@ public class PacienteService {
         new java.io.File("data").mkdirs();
     }
 
+    //cadastro do paciente
     public boolean cadastrarPaciente(Paciente paciente){
         if (paciente == null){
             System.out.println("Erro! o Paciente não pode ser nulo!");
@@ -39,7 +42,7 @@ public class PacienteService {
         
     }
     
-
+    //buscar paciente pelo cpf
     public Optional<Paciente> buscarPacientePorCpf(String cpfPaciente) {
         
         try (BufferedReader reader = new BufferedReader(new FileReader(ARQUIVO_PACIENTES))) {
@@ -65,9 +68,42 @@ public class PacienteService {
                 }
             }
         } catch (IOException e) {
-            
+                        //se o arquivo não existir ou houver erro de leitura, retorna lista vazia
         } 
         
         return Optional.empty();
+    }
+
+
+    //metodo listar paciente
+    public List<Paciente> listarTodosPacientes() {
+        List<Paciente> pacientes = new ArrayList<>();
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader(ARQUIVO_PACIENTES))) {
+            
+            String linha;
+
+            while ((linha = reader.readLine()) != null) {
+                String[] dados = linha.trim().split(",");
+                
+                // nome [0], CPF[1] , idade[2]
+                if (dados.length >= 3) {
+                    try {
+                        String nome = dados[0].trim();
+                        String cpf = dados[1].trim();
+                        int idade = Integer.parseInt(dados[2].trim());
+                        
+                        pacientes.add(new Paciente(nome, cpf, idade));
+                        
+                    } catch (NumberFormatException e) {
+                        //ignora linhas mal formatadas
+                    }
+                }
+            }
+        } catch (IOException e) {
+            //se o arquivo não existir ou houver erro de leitura, retorna lista vazia
+        } 
+        
+        return pacientes;
     }
 }

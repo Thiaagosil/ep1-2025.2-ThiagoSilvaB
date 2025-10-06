@@ -2,7 +2,8 @@ package ui;
 import java.util.Locale;
 import java.util.Optional; 
 import java.util.Scanner; 
-import models.internacao.Internacao; 
+import models.internacao.Internacao;
+import models.pessoa.medico.Especialidade;
 import models.pessoa.medico.Medico; 
 import models.pessoa.paciente.Paciente;
 import services.ConsultaService;
@@ -107,13 +108,19 @@ public class Menu {
             System.out.println("2- Cadastrar Paciente (Especial)");
             System.out.println("3- Listar Pacientes Cadastrados");
             System.out.println("0- Voltar ao Menu Principal");
-            
-            opcaoPaciente = sc.nextInt();
-            sc.nextLine();
-            
-            
+         
+            try {
+                opcaoPaciente = sc.nextInt();
+                sc.nextLine(); 
+        } catch (java.util.InputMismatchException e) {
+                System.out.println("Erro! Entrada inválida. Por favor, digite um número.");
+                sc.nextLine(); 
+                opcaoPaciente = -1;
+            continue;
+        }
 
             switch (opcaoPaciente){
+                //paciente comum
                 case 1: 
                     try {
                         System.out.println("\n================= CADASTRO DE PACIENTE (Comum) =================");
@@ -127,21 +134,48 @@ public class Menu {
 
                         Paciente novoPaciente = new Paciente(nome, cpf , idade);
                         pacienteService.cadastrarPaciente(novoPaciente);
-                        System.out.println("\n✅ Paciente cadastrado com sucesso!");
+                        System.out.println("\n Paciente cadastrado com sucesso!");
                     } catch (Exception e) {
                         System.out.println("Erro ao cadastrar paciente: " + e.getMessage());
-                        // Garante que a linha extra seja consumida após erro de input
+                        //linha extra seja consumida após erro de input
                         if (sc.hasNextLine()) {
                             sc.nextLine(); 
                         }
                     }
                 
-                break;      
+                break;  
+                
+                //paciente especial
+                case 2:
+                 System.out.println("...");
+                break;
+
+                //listagem de pacientes
+                case 3:
+                        System.out.println("\n==== LISTA DE PACIENTES CADASTRADOS ====");
+
+                          if (pacienteService.listarTodosPacientes().isEmpty()) {
+                            System.out.println("Nenhum paciente cadastrado!");
+                    } 
+                        else{
+                            pacienteService.listarTodosPacientes().forEach(p -> 
+                        System.out.println("Nome: " + p.getNome() + " | CPF: " + p.getCpf() + " | Idade: " + p.getIdade()));
+                    }
+
+                break;
+
+                case 0:
+                        System.out.println("Voltando...");
+                break;
+
+
+                default:
+                if(opcaoPaciente != -1) {
+                        System.out.println("Opção Inválida. Tente novamente! ");
+                }
             }
             
-            
         }
-
 
     }
 
@@ -158,10 +192,128 @@ public class Menu {
             System.out.println("2- Listar Médicos Cadastrados");
             
             System.out.println("0- Voltar ao Menu Principal");
+          
             
+            try {
             opcaoMedico = sc.nextInt();
             sc.nextLine();
             
+        }
+         catch (java.util.InputMismatchException e) {
+            System.out.println("Erro! Entrada inválida. Por favor, digite um número.");
+            sc.nextLine(); // Limpa o buffer de entrada
+            opcaoMedico = -1;
+            continue;
+        }
+
+        switch(opcaoMedico){
+            case 1:
+                    try{
+                        System.out.println("\n================= CADASTRO DE MÉDICO =================");
+
+                        System.out.println("Nome do Médico: ");
+                        String nome = sc.nextLine();
+
+                        System.out.println("CPF: ");
+                        String cpf = sc.nextLine();
+
+                        System.out.print("CRM (apenas números): ");
+                        int crm = sc.nextInt();
+                        sc.nextLine();
+                        
+
+                     Especialidade especialidadeInicial = null;
+                     boolean especialidadeValida = false;
+        
+                    while (!especialidadeValida) {
+                    System.out.println("\n--- ESPECIALIDADES DISPONÍVEIS ---");
+             
+                    int i = 1;
+                    for (Especialidade e : Especialidade.values()) {
+                      
+                        System.out.println(i++ + "- " + e.getDescricao());
+                    }
+                    
+                    System.out.print("Escolha o número da especialidade inicial: ");
+                    int escolha = sc.nextInt();
+                    sc.nextLine(); 
+
+
+                    if (escolha > 0 && escolha <= Especialidade.values().length) {
+                        especialidadeInicial = Especialidade.values()[escolha - 1];
+                        especialidadeValida = true;
+                    } else {
+                        System.out.println("opção de especialidade inválida. Tente novamente.");
+                    }
+                }
+                        //custo sem desconto
+                        System.out.print("Custo da Consulta: R$");
+
+                        double custoConsulta = sc.nextDouble();
+                        sc.nextLine(); 
+
+
+                        //cadastro e inserção no medicoservice
+                        Medico novoMedico = new Medico(nome, cpf, crm, especialidadeInicial, custoConsulta);
+                        medicoService.cadastrarMedico(novoMedico);
+
+                        System.out.println("\n Médico " + nome + " cadastrado com sucesso!");
+
+
+                    }
+
+                    
+
+                    catch(java.util.InputMismatchException e){
+                    System.out.println("Erro! Entrada inválida. por favor, digite um número inteiro.");
+                    sc.nextLine(); 
+                    }
+                    
+                    catch(Exception e){
+                    System.out.println("Erro ao cadastrar médico: " + e.getMessage());
+                    }
+            break;
+
+
+            case 2:
+                    System.out.println("\n==== LISTA DE MÉDICOS CADASTRADOS ==== ");
+                     if (medicoService.listarTodosMedicos().isEmpty()) {
+                        System.out.println("Nenhum médico cadastrado!");
+                    } else {
+                    medicoService.listarTodosMedicos().forEach(m -> {
+            
+            String especialidades = "";
+            for (Especialidade e : m.getEspecialidades()) {
+                especialidades += e.getDescricao() + ", "; 
+            }
+            
+            if (!especialidades.isEmpty()) {
+                especialidades = especialidades.substring(0, especialidades.length() - 2);
+            }
+            
+            String custoFormatado = String.format(Locale.forLanguageTag("pt-BR"), "R$ %.2f", m.getCustoConsulta());
+            
+            System.out.println("\nNome: " + m.getNome() + 
+                               "  \nCPF: " + m.getCpf() + 
+                               "  \nCRM: " + m.getCRM() +
+                               "  \nEspecialidades: " + (especialidades.isEmpty() ? "Nenhuma" : especialidades) +
+                               "  \nCusto/Consulta: " + custoFormatado);
+        });
+    }
+            break;
+
+            case 0:
+            System.out.println("Voltando ao menu principal...");
+            break;
+
+        default:
+            if(opcaoMedico != -1) {
+                System.out.println("Opção Inválida. Tente novamente! ");
+            }
+
+        }
+            
+
         }
 
     }
@@ -332,7 +484,7 @@ public class Menu {
     }
 }
 
-
+// gerenciamento de internações
     public static void gerenciarInternacoes(Scanner sc, InternacaoService internacaoService, PacienteService pacienteService,
                 MedicoService medicoService, QuartoService quartoService){
                     
