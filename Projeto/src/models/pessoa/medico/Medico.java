@@ -1,10 +1,8 @@
 package models.pessoa.medico;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
-import java.time.LocalDateTime;
+import models.consulta.Consulta; 
 import models.pessoa.Pessoa;
 
 
@@ -12,7 +10,8 @@ public class Medico extends Pessoa {
     private int CRM;
     private List<Especialidade> especialidades;
     private double CustoConsulta;
-    private List<LocalDateTime> agenda;
+    
+    private final List<Consulta> agendaConsultas; 
 
 
     public Medico(String nome, String cpf, int CRM, Especialidade especialidade, double CustoConsulta) {
@@ -24,19 +23,24 @@ public class Medico extends Pessoa {
         this.especialidades.add(especialidade);
 
         this.CustoConsulta = CustoConsulta;
-        this.agenda = new ArrayList<>();
+        
+        //inicializa a lista de consultas
+        this.agendaConsultas = new ArrayList<>();
 
     }
     
-    //Adicionar Especialidade
+    //adiciona Especialidade
     public void adicionarEspecialidade(Especialidade especialidade){
         this.especialidades.add(especialidade);
     }
 
+        //adiciona consulta na agenda.
+    public void adicionarConsulta(Consulta consulta){
+        this.agendaConsultas.add(consulta);
+    }
 
 
     // Getters e Setters
-
 
     public int getCRM() {
         return CRM;
@@ -55,9 +59,13 @@ public class Medico extends Pessoa {
     }
 
 
-    // cópia da lista de especialidades
+    // Retorna cópia da lista de especialidades
     public List<Especialidade> getEspecialidades() {
         return new ArrayList<>(this.especialidades);
+    }
+    
+    public List<Consulta> getAgendaConsultas() {
+        return new ArrayList<>(this.agendaConsultas);
     }
 
 }

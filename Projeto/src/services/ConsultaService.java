@@ -1,148 +1,145 @@
 package services;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import models.consulta.Consulta;
-import models.consulta.ConsultaStatus;
+import models.consulta.ConsultaEspecial; 
 import models.pessoa.medico.Medico;
 import models.pessoa.paciente.Paciente;
+import models.pessoa.paciente.PacienteEspecial; 
 
 public class ConsultaService {
-    private static final String ARQUIVO_CONSULTAS = "data/consultas.csv";
-    private List<Consulta> consultas;
 
-    //Dependência, buscar em MedicoService e PacienteService
-    private PacienteService pacienteService;
-    private MedicoService medicoService;
+    private final List<Consulta> todasConsultas; 
+    
+    private final PacienteService pacienteService;
+    private final MedicoService medicoService;
 
-    //construtor para injetar a dependência.
-    public ConsultaService(PacienteService pacienteService, MedicoService medicoService){
+    public ConsultaService(PacienteService pacienteService, MedicoService medicoService) {
+        this.todasConsultas = new ArrayList<>();
         this.pacienteService = pacienteService;
         this.medicoService = medicoService;
-        this.consultas = this.carregarConsultasDoArquivos(); 
-
     }
+    
 
-    // tentar agendar uma nova consulta após verificar se a disponibilidade..
-    public boolean agendarConsulta(Paciente paciente, Medico medico, LocalDateTime dataHora){
-        if(paciente == null || medico == null){
-            System.out.println("Erro! Médico e Paciente não podem ser nulos!");
-            return false;
-        }
+    private void verificarConflito(Medico medico, LocalDateTime dataHora) {
+        //verificar disponibilidade
+        boolean temConflito = medico.getAgendaConsultas().stream()
+            .anyMatch(c -> c.getDataHora().isEqual(dataHora)); 
         
-         if(!this.isMedicoDisponivel(medico, dataHora)){ 
-            System.out.println("Erro! o Médico " + medico.getNome()+ " não está disponível neste horário!");
-            return false;
+        if (temConflito) {
+            throw new IllegalArgumentException("O médico " + medico.getNome() + 
+                                               " já possui uma consulta agendada para este horário: " + dataHora);
         }
+    }
+
+
+
+    //agendamento para Pacientes Comuns
+    public Consulta agendarConsulta(Paciente paciente, Medico medico, LocalDateTime dataHora) {
         
-
-        Consulta novaConsulta = new Consulta(paciente, medico, dataHora);
-
-        if(salvarConsulta(novaConsulta)) {
-            paciente.adicionarConsulta(novaConsulta);
-            System.out.println("Consulta agendada com sucesso para ás " + dataHora);
-            return true;
-        }
-
-
-        return false;
-
-    }
-
-    // Verificando a Disponibilidade do médico
-
-   private boolean isMedicoDisponivel(Medico medico, LocalDateTime dataHora){ 
-        for(Consulta c : consultas){
-            // verificação se é o mesmo médico, mesmo horário..
-            if(c.getMedico().getCpf().equals(medico.getCpf()) && c.getDataHora().isEqual(dataHora)) {
-                return false;
-            }    
-        }
-        return true;
-    }
-
-
-
-
-
-    private boolean salvarConsulta(Consulta consulta) {
-        try(PrintWriter writer = new PrintWriter(new FileWriter(ARQUIVO_CONSULTAS, true))){
-            //CPF como indetificação 
-            
-            writer.println(
-                consulta.getPaciente().getCpf() + "," + 
-                consulta.getMedico().getCpf() + "," + 
-                consulta.getDataHora() + "," +
-                consulta.getStatus()
-            );
-            consultas.add(consulta);
-            return true;
-        }
-        catch(IOException e){
-            System.err.println("Erro ao salvar consulta no arquivo: " + e.getMessage());
-            return false;
-        }
-    }
-
-
-    public List<Consulta> carregarConsultasDoArquivos(){
+        verificarConflito(medico, dataHora); // verificar disp
         
+        //criar Consulta Comum
+        Consulta novaConsulta = new Consulta(paciente, medico, dataHora); 
 
-        List<Consulta> listaCarregada = new ArrayList<>();
+        this.todasConsultas.add(novaConsulta);
+        medico.adicionarConsulta(novaConsulta);
+        paciente.adicionarConsulta(novaConsulta);
+        
+        return novaConsulta;
+    }
+    
+    
+    //agendamento para Pacientes Especiais, usando a lógica de desconto.
+     
+    public ConsultaEspecial agendarConsultaEspecial(PacienteEspecial paciente, Medico medico, LocalDateTime dataHora) {
+        
+        verificarConflito(medico, dataHora); //verificar Conflito
+        
+        
+        ConsultaEspecial novaConsultaEspecial = new ConsultaEspecial(paciente, medico, dataHora, paciente.getPlanoSaude());
 
-        try(BufferedReader reader = new BufferedReader(new FileReader(ARQUIVO_CONSULTAS))) {
-            
-            String linha;
+        // consultaEspecial (que herda de Consulta) nas listas
+        this.todasConsultas.add(novaConsultaEspecial);
+        medico.adicionarConsulta(novaConsultaEspecial);
+        paciente.adicionarConsulta(novaConsultaEspecial);
+        
+        return novaConsultaEspecial;
+    }
+ 
+    
 
-            while((linha = reader.readLine()) != null){
-                String[] dados = linha.split(",");
 
 
-                if (dados.length == 4) {
-                    String cpfPaciente = dados[0];
-                    String cpfMedico = dados[1];
-                    LocalDateTime dataHora = LocalDateTime.parse(dados[2]);
-                    ConsultaStatus status = ConsultaStatus.valueOf(dados[3]);
+    //finalização da consulta 
+    public Consulta finalizarConsulta(String cpfPaciente, LocalDateTime dataHora, String diagnostico, String prescricao) {
+    
+    //buscar a consulta
+    java.util.Optional<Consulta> consultaOpt = this.todasConsultas.stream()
+        .filter(c -> c.getPaciente().getCpf().equals(cpfPaciente))
+        .filter(c -> c.getDataHora().isEqual(dataHora))
+        .findFirst();
 
-                    // Buscar os Objetos pelo CPF.
-              
-                    var pacienteOpt = pacienteService.buscarPacientePorCpf(cpfPaciente);
-                    var medicoOpt = medicoService.buscarMedicoPorCpf(cpfMedico);
+    if (consultaOpt.isEmpty()) {
+        throw new IllegalArgumentException("Consulta não encontrada para o paciente e horário informados.");
+    }
+    
+    Consulta consulta = consultaOpt.get();
 
-                    if(pacienteOpt.isPresent() && medicoOpt.isPresent()){
-                        
-                        Paciente paciente = pacienteOpt.get();
-                        Medico medico = medicoOpt.get();
-                        
-                        Consulta c = new Consulta(paciente, medico, dataHora);
-                        c.setStatus(status);
 
-                        listaCarregada.add(c);
-
-                        paciente.adicionarConsulta(c); 
-
-                    } else 
-                    {
-                         System.err.println("Erro, Paciente ou Médico não encontrado ao carregar consulta. Linha ignorada.");
-                    }
-                }
-            }
-        }
-      catch (IOException e) {
-            System.err.println("Erro ao carregar consultas do arquivo: " + e.getMessage());
-        } catch (Exception e) {
-             System.err.println("Erro de formato ao carregar consultas: " + e.getMessage());
-        }
-        return listaCarregada;
+    //verifica o status
+    if (consulta.getStatus() != models.consulta.ConsultaStatus.AGENDADA) {
+        throw new IllegalArgumentException("A consulta já foi finalizada ou cancelada (Status: " + consulta.getStatus() + ").");
     }
 
-      public List<Consulta> listarTodasConsultas() {
-        return new ArrayList<>(this.consultas); //retorna uma cópia de todas as consultas
+    //atualiza a prescricao e o diagnostico
+    consulta.setDiagnostico(diagnostico);
+    consulta.setPrescricao(prescricao);
+    
+    //usando o enum 'Concluida'
+    consulta.setStatus(models.consulta.ConsultaStatus.CONCLUIDA); 
+    
+    return consulta;
+}
+
+
+
+
+
+
+
+    //cancelar consulta
+    public Consulta cancelarConsulta(String cpfPaciente, LocalDateTime dataHora) {
+    
+    //buscar consulta
+    java.util.Optional<Consulta> consultaOpt = this.todasConsultas.stream()
+        .filter(c -> c.getPaciente().getCpf().equals(cpfPaciente))
+        .filter(c -> c.getDataHora().isEqual(dataHora))
+        .findFirst();
+
+    if (consultaOpt.isEmpty()) {
+        throw new IllegalArgumentException("Consulta não encontrada para o paciente e horário informados.");
     }
+    
+    Consulta consulta = consultaOpt.get();
+
+    //só podemos cancelar caso a consulta esteja AGENDADA.
+    if (consulta.getStatus() != models.consulta.ConsultaStatus.AGENDADA) {
+        throw new IllegalArgumentException("A consulta não pode ser cancelada. Status atual: " + consulta.getStatus());
+    }
+
+    // att e cancela
+    consulta.setStatus(models.consulta.ConsultaStatus.CANCELADA); 
+    
+    return consulta;
+}
+
+
+    //retorna todas as consultas do sistema
+    public List<Consulta> listarTodasConsultas() {
+        return new ArrayList<>(this.todasConsultas);
+    }
+
 }

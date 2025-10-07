@@ -18,15 +18,14 @@ public class PlanosDeSaude {
     this.descontoPorEspecialidade = new HashMap<>();
 }
 
-    public void AdicionarDesconto(Especialidade especialidade, double percentualDesconto){
-        
-         //desconto entre 0% e 100%
-        if(percentualDesconto >= 0 && percentualDesconto <= 1.0){
-            this.descontoPorEspecialidade.put(especialidade, percentualDesconto);
-        } else {
-            System.out.println("Erro, percentual de desconto deve está entre 0.0 e 1.0");
-        }
+public void AdicionarDesconto(Especialidade especialidade, double percentualDesconto){
+
+    //desconto entre 0% e 100%
+    if(percentualDesconto < 0.0 || percentualDesconto > 1.0){
+        throw new IllegalArgumentException("Erro! Percentual de desconto deve estar entre 0.0 (0%) e 1.0 (100%).");
     }
+    this.descontoPorEspecialidade.put(especialidade, percentualDesconto);
+}
 
     public double getDescontoPorEspecialidade(Especialidade especialidade){
             return this.descontoPorEspecialidade.getOrDefault(especialidade,0.0);
