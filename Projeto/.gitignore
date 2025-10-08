@@ -1,0 +1,12 @@
+# Arquivos de compilacao Java (o bytecode que causa o problema)
+*.class
+# Logs e metadados de IDEs
+.project
+.classpath
+# Pastas de build de IDEs (muitas vezes criadas pelo VS Code ou Eclipse)
+/bin/
+/out/
+# Configuracoes e caches especificos do VS Code
+.vscode/
+# Arquivos temporarios
+*.log
