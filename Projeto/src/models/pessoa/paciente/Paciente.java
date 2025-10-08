@@ -11,7 +11,7 @@ public class Paciente extends Pessoa {
   
     private int idade;
     private List<Consulta> historicoConsultas;
-    private List<Internacao> historicoInternacoes;
+    private final List<Internacao> historicoInternacoes;
     private Optional<Internacao> internacaoAtual;
 
     public Paciente(String nome, String cpf, int idade) {
@@ -61,4 +61,9 @@ public class Paciente extends Pessoa {
         return internacaoAtual;
     }
 
+    public void setHistoricoConsultas(List<Consulta> historicoConsultas) {
+        this.historicoConsultas = historicoConsultas;
+    }
+
+    
 }

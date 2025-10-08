@@ -163,4 +163,4 @@ public class InternacaoService {
                 .filter(i -> i.getPaciente().getCpf().equals(cpf))
                 .findFirst();
     }
-}
+}   

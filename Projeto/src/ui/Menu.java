@@ -12,6 +12,10 @@ import models.internacao.Internacao;
 import models.pessoa.medico.Especialidade;
 import models.pessoa.medico.Medico; 
 import models.pessoa.paciente.Paciente;
+import repository.ConsultaRepositoryCSV;
+import repository.MedicoRepositoryCSV;
+import repository.PacienteRepositoryCSV;
+import repository.PlanoSaudeRepositoryCSV;
 import services.ConsultaService;
 import services.InternacaoService;
 import services.MedicoService;
@@ -20,88 +24,82 @@ import services.PlanoSaudeService;
 import services.QuartoService;
 
 
-
-
-
 public class Menu {
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-
-      //planos <> descontos
-        PlanoSaudeService planoSaudeService = new PlanoSaudeService();
-        PacienteService pacienteService = new PacienteService(planoSaudeService);
-        
-        MedicoService medicoService = new MedicoService();
-        ConsultaService consultaService = new ConsultaService(pacienteService, medicoService);
-        
-        // serviços
-        QuartoService quartoService = new QuartoService();
-        InternacaoService internacaoService = new InternacaoService(quartoService);
-
-        int opcao = -1;
-
-        while(opcao != 0){
-            System.out.println("\n=========== MENU PRINCIPAL ===========");
-            System.out.println("\nBem-vindo!");
-            System.out.println("\nEscolha o serviço de sua preferencia: ");
-
-            System.out.println("1- Cadastro de Paciente");
-            System.out.println("2- Cadastro de Médico");
-            System.out.println("3- Agendar Consulta");
-            System.out.println("4- Gerenciar Internações");
-            System.out.println("5- Cadastrar Plano de Saúde"); 
-            System.out.println("6- Relatórios e Estatísticas");
-            System.out.println("7- Históricos e Buscas");
-                         System.out.println("0- SAIR");
+        //planos <> descontos
+        try (Scanner sc = new Scanner(System.in)) {
             
+            // SEÇÃO DE INICIALIZAÇÃO 
+
+            // Planos de Saúde 
+            PlanoSaudeRepositoryCSV planoSaudeRepository = new PlanoSaudeRepositoryCSV();
+            PlanoSaudeService planoSaudeService = new PlanoSaudeService(planoSaudeRepository);
+
+            // Médicos
+            MedicoRepositoryCSV medicoRepository = new MedicoRepositoryCSV();
+            MedicoService medicoService = new MedicoService(medicoRepository);
+
+            //  Pacientes
+            PacienteRepositoryCSV pacienteRepository = new PacienteRepositoryCSV();
+            PacienteService pacienteService = new PacienteService(planoSaudeService, pacienteRepository);
+
+            //  Consultas
+            ConsultaRepositoryCSV consultaRepository = new ConsultaRepositoryCSV();
+            ConsultaService consultaService = new ConsultaService(pacienteService, medicoService, consultaRepository);
+
+
+            //  Serviços
+            QuartoService quartoService = new QuartoService();
+            InternacaoService internacaoService = new InternacaoService(quartoService);
             
-            //===========================
-
-            opcao = sc.nextInt();
-            sc.nextLine();
-
-            switch (opcao) {
+            int opcao = -1;
+            
+            while(opcao != 0){
+                System.out.println("\n=========== MENU PRINCIPAL ===========");
+                System.out.println("\nBem-vindo!");
+                System.out.println("\nEscolha o serviço de sua preferencia: ");
                 
-                case 1:
-                    gerenciarPacientes(sc, pacienteService);
-                    break;
-
-                   case 2:
-                    gerenciarMedicos(sc, medicoService);
-                    break;
-
-                case 3:
-                    gerenciarConsultas(sc, consultaService, pacienteService, medicoService);
-                    break;
-
-                case 4:
-                    gerenciarInternacoes(sc, internacaoService, pacienteService, medicoService, quartoService);
-                    break;
-                     
-                case 5:
-                    gerenciarPlanoSaude(sc, planoSaudeService);
-                break;
-
-                case 6:
-                   // gerenciarRelatoriosEstatisticas(sc, pacienteService, medicoService, consultaService, internacaoService);
-                break;
-
-                case 7:
-                    gerenciarHistorico(sc, pacienteService);
-                break;
-
-                case 0:
-                    System.out.println("Fechando o Sistema...");
-                    break;
-
+                System.out.println("1- Cadastro de Paciente");
+                System.out.println("2- Cadastro de Médico");
+                System.out.println("3- Agendar Consulta");
+                System.out.println("4- Gerenciar Internações");
+                System.out.println("5- Cadastrar Plano de Saúde");
+                System.out.println("6- Relatórios e Estatísticas");
+                System.out.println("7- Históricos e Buscas");
+                System.out.println("0- SAIR");
+                
+                
+                //===========================
+                
+                opcao = sc.nextInt();
+                sc.nextLine();
+                
+                switch (opcao) {
                     
-                default:
-                    System.out.println("Opção Inválida. Tente novamente! ");
-                
+                    case 1 -> gerenciarPacientes(sc, pacienteService);
+                    
+                    case 2 -> gerenciarMedicos(sc, medicoService);
+                    
+                    case 3 -> gerenciarConsultas(sc, consultaService, pacienteService, medicoService);
+                    
+                    case 4 -> gerenciarInternacoes(sc, internacaoService, pacienteService, medicoService, quartoService);
+                    
+                    case 5 -> gerenciarPlanoSaude(sc, planoSaudeService);
+                    
+                    case 6 -> {
+                    }
+                    
+                    case 7 -> gerenciarHistorico(sc, pacienteService);
+                    
+                    case 0 -> System.out.println("Fechando o Sistema...");
+                    
+                    
+                    default -> System.out.println("Opção Inválida. Tente novamente! ");
+                    
                 }
+                // gerenciarRelatoriosEstatisticas(sc, pacienteService, medicoService, consultaService, internacaoService);
+            }
         }
-
-        sc.close();
    }
 
 
@@ -204,8 +202,7 @@ public class Menu {
         }
 
             switch (opcaoPaciente){
-                //paciente comum
-                case 1: 
+                case 1 -> { 
                     try {
                         System.out.println("\n================= CADASTRO DE PACIENTE (Comum) =================");
                         System.out.println("\nNome do Paciente:");
@@ -226,72 +223,64 @@ public class Menu {
                             sc.nextLine(); 
                         }
                     }
-                
-                break;  
-                
-                //paciente especial
-                case 2:
-                 try{
-                    System.out.println("\n================= CADASTRO DE PACIENTE (Especial) =================");
-                    
-                    System.out.print("\nNome do Paciente: ");
-                    String nome = sc.nextLine();
-                    System.out.print("\nCPF: ");
-                    String cpf = sc.nextLine();
-                    System.out.print("\nIdade: ");
-                    int idade = sc.nextInt();
-                    sc.nextLine();
-
-                    System.out.println("\n--- VINCULAR PLANO DE SAÚDE ---");
-                    System.out.print("Digite o código do Plano de Saúde: ");
-                    String codigoPlano = sc.nextLine();
-
-                    pacienteService.cadastrarPacienteEspecial(nome, cpf, idade, codigoPlano);
-
-                    System.out.println("\n Paciente ESPECIAL cadastrado com sucesso e VINCULADO ao plano " + codigoPlano + "!");
-                
-
-
-                } 
-                catch(java.util.InputMismatchException e){
-                    System.out.println("Erro! Entrada inválida. Por favor, digite um número para a idade.");
-                    sc.nextLine(); 
-                } 
-                catch(Exception e){
-                    System.out.println("Erro ao cadastrar paciente especial: " + e.getMessage());
-
                 }
-                
-                
-                
-                
-                break;
-
-                //listagem de pacientes
-                case 3:
-                        System.out.println("\n==== LISTA DE PACIENTES CADASTRADOS ====");
-
-                          if (pacienteService.listarTodosPacientes().isEmpty()) {
-                            System.out.println("Nenhum paciente cadastrado!");
-                    } 
-                        else{
-                            pacienteService.listarTodosPacientes().forEach(p -> 
-                        System.out.println("Nome: " + p.getNome() + " | CPF: " + p.getCpf() + " | Idade: " + p.getIdade()));
+                case 2 -> {
+                    try{
+                        System.out.println("\n================= CADASTRO DE PACIENTE (Especial) =================");
+                        
+                        System.out.print("\nNome do Paciente: ");
+                        String nome = sc.nextLine();
+                        System.out.print("\nCPF: ");
+                        String cpf = sc.nextLine();
+                        System.out.print("\nIdade: ");
+                        int idade = sc.nextInt();
+                        sc.nextLine();
+                        
+                        System.out.println("\n--- VINCULAR PLANO DE SAÚDE ---");
+                        System.out.print("Digite o código do Plano de Saúde: ");
+                        String codigoPlano = sc.nextLine();
+                        
+                        pacienteService.cadastrarPacienteEspecial(nome, cpf, idade, codigoPlano);
+                        
+                        System.out.println("\n Paciente ESPECIAL cadastrado com sucesso e VINCULADO ao plano " + codigoPlano + "!");
+                        
+                        
+                        
                     }
+                    catch(java.util.InputMismatchException e){
+                        System.out.println("Erro! Entrada inválida. Por favor, digite um número para a idade.");
+                        sc.nextLine();
+                    }
+                    catch(Exception e){
+                        System.out.println("Erro ao cadastrar paciente especial: " + e.getMessage());
+                        
+                    }
+                }
+                case 3 -> {
+                    System.out.println("\n==== LISTA DE PACIENTES CADASTRADOS ====");
+                    
+                    if (pacienteService.listarTodosPacientes().isEmpty()) {
+                        System.out.println("Nenhum paciente cadastrado!");
+                    }
+                    else{
+                        pacienteService.listarTodosPacientes().forEach(p ->
+                                System.out.println("Nome: " + p.getNome() + " | CPF: " + p.getCpf() + " | Idade: " + p.getIdade()));
+                    }
+                }
 
-                break;
-
-                case 0:
-                        System.out.println("Voltando...");
-                break;
+                case 0 -> System.out.println("Voltando...");
 
 
-                default:
-                if(opcaoPaciente != -1) {
+                default -> {
+                    if(opcaoPaciente != -1) {
                         System.out.println("Opção Inválida. Tente novamente! ");
+                    }
                 }
             }
-            
+            //paciente comum
+            //paciente especial
+            //listagem de pacientes
+                        
         }
 
     }
@@ -324,109 +313,106 @@ public class Menu {
         }
 
         switch(opcaoMedico){
-            case 1:
-                    try{
-                        System.out.println("\n================= CADASTRO DE MÉDICO =================");
-
-                        System.out.println("Nome do Médico: ");
-                        String nome = sc.nextLine();
-
-                        System.out.println("CPF: ");
-                        String cpf = sc.nextLine();
-
-                        System.out.print("CRM (apenas números): ");
-                        int crm = sc.nextInt();
+            case 1 -> {
+                try{
+                    System.out.println("\n================= CADASTRO DE MÉDICO =================");
+                    
+                    System.out.println("Nome do Médico: ");
+                    String nome = sc.nextLine();
+                    
+                    System.out.println("CPF: ");
+                    String cpf = sc.nextLine();
+                    
+                    System.out.print("CRM (apenas números): ");
+                    int crm = sc.nextInt();
+                    sc.nextLine();
+                    
+                    
+                    Especialidade especialidadeInicial = null;
+                    boolean especialidadeValida = false;
+                    
+                    while (!especialidadeValida) {
+                        System.out.println("\n--- ESPECIALIDADES DISPONÍVEIS ---");
+                        
+                        int i = 1;
+                        for (Especialidade e : Especialidade.values()) {
+                            
+                            System.out.println(i++ + "- " + e.getDescricao());
+                        }
+                        
+                        System.out.print("Escolha o número da especialidade inicial: ");
+                        int escolha = sc.nextInt();
                         sc.nextLine();
                         
-
-                     Especialidade especialidadeInicial = null;
-                     boolean especialidadeValida = false;
-        
-                    while (!especialidadeValida) {
-                    System.out.println("\n--- ESPECIALIDADES DISPONÍVEIS ---");
-             
-                    int i = 1;
-                    for (Especialidade e : Especialidade.values()) {
-                      
-                        System.out.println(i++ + "- " + e.getDescricao());
+                        
+                        if (escolha > 0 && escolha <= Especialidade.values().length) {
+                            especialidadeInicial = Especialidade.values()[escolha - 1];
+                            especialidadeValida = true;
+                        } else {
+                            System.out.println("opção de especialidade inválida. Tente novamente.");
+                        }
                     }
+                    //custo sem desconto
+                    System.out.print("Custo da Consulta: R$");
                     
-                    System.out.print("Escolha o número da especialidade inicial: ");
-                    int escolha = sc.nextInt();
-                    sc.nextLine(); 
-
-
-                    if (escolha > 0 && escolha <= Especialidade.values().length) {
-                        especialidadeInicial = Especialidade.values()[escolha - 1];
-                        especialidadeValida = true;
-                    } else {
-                        System.out.println("opção de especialidade inválida. Tente novamente.");
-                    }
+                    double custoConsulta = sc.nextDouble();
+                    sc.nextLine();
+                    
+                    
+                    //cadastro e inserção no medicoservice
+                    Medico novoMedico = new Medico(nome, cpf, crm, especialidadeInicial, custoConsulta);
+                    medicoService.cadastrarMedico(novoMedico);
+                    
+                    System.out.println("\n Médico " + nome + " cadastrado com sucesso!");
+                    
+                    
                 }
-                        //custo sem desconto
-                        System.out.print("Custo da Consulta: R$");
-
-                        double custoConsulta = sc.nextDouble();
-                        sc.nextLine(); 
-
-
-                        //cadastro e inserção no medicoservice
-                        Medico novoMedico = new Medico(nome, cpf, crm, especialidadeInicial, custoConsulta);
-                        medicoService.cadastrarMedico(novoMedico);
-
-                        System.out.println("\n Médico " + nome + " cadastrado com sucesso!");
-
-
-                    }
-
-                    
-
-                    catch(java.util.InputMismatchException e){
+                
+                
+                
+                catch(java.util.InputMismatchException e){
                     System.out.println("Erro! Entrada inválida. por favor, digite um número inteiro.");
-                    sc.nextLine(); 
-                    }
-                    
-                    catch(Exception e){
+                    sc.nextLine();
+                }
+                
+                catch(Exception e){
                     System.out.println("Erro ao cadastrar médico: " + e.getMessage());
-                    }
-            break;
+                }
+                }
 
 
-            case 2:
-                    System.out.println("\n==== LISTA DE MÉDICOS CADASTRADOS ==== ");
-                     if (medicoService.listarTodosMedicos().isEmpty()) {
-                        System.out.println("Nenhum médico cadastrado!");
-                    } else {
+            case 2 -> {
+                System.out.println("\n==== LISTA DE MÉDICOS CADASTRADOS ==== ");
+                if (medicoService.listarTodosMedicos().isEmpty()) {
+                    System.out.println("Nenhum médico cadastrado!");
+                } else {
                     medicoService.listarTodosMedicos().forEach(m -> {
-            
-            String especialidades = "";
-            for (Especialidade e : m.getEspecialidades()) {
-                especialidades += e.getDescricao() + ", "; 
-            }
-            
-            if (!especialidades.isEmpty()) {
-                especialidades = especialidades.substring(0, especialidades.length() - 2);
-            }
-            
-            String custoFormatado = String.format(Locale.forLanguageTag("pt-BR"), "R$ %.2f", m.getCustoConsulta());
-            
-            System.out.println("\nNome: " + m.getNome() + 
-                               "  \nCPF: " + m.getCpf() + 
-                               "  \nCRM: " + m.getCRM() +
-                               "  \nEspecialidades: " + (especialidades.isEmpty() ? "Nenhuma" : especialidades) +
-                               "  \nCusto/Consulta: " + custoFormatado);
-        });
-    }
-            break;
+                        
+                        String especialidades = "";
+                        for (Especialidade e : m.getEspecialidades()) {
+                            especialidades += e.getDescricao() + ", ";
+                        }
+                        
+                        if (!especialidades.isEmpty()) {
+                            especialidades = especialidades.substring(0, especialidades.length() - 2);
+                        }
+                        
+                        String custoFormatado = String.format(Locale.forLanguageTag("pt-BR"), "R$ %.2f", m.getCustoConsulta());
+                        
+                        System.out.println("\nNome: " + m.getNome() +
+                                "  \nCPF: " + m.getCpf() +
+                                "  \nCRM: " + m.getCRM() +
+                                "  \nEspecialidades: " + (especialidades.isEmpty() ? "Nenhuma" : especialidades) +
+                                "  \nCusto/Consulta: " + custoFormatado);
+                    });
+                }           }
 
-            case 0:
-            System.out.println("Voltando ao menu principal...");
-            break;
+            case 0 -> System.out.println("Voltando ao menu principal...");
 
-        default:
+        default -> {
             if(opcaoMedico != -1) {
                 System.out.println("Opção Inválida. Tente novamente! ");
-            }
+            }   }
 
         }
             
@@ -462,13 +448,10 @@ public static void gerenciarConsultas(Scanner sc, ConsultaService consultaServic
         }
 
         switch(opcaoConsulta) {
-            case 1:
-                marcarNovaConsulta(sc, consultaService, pacienteService, medicoService);                
-                break;
-            case 2:
+            case 1 -> marcarNovaConsulta(sc, consultaService, pacienteService, medicoService);
+            case 2 -> {
+                System.out.println("\n==== LISTA DE CONSULTAS CADASTRADAS ====");
                 
-                 System.out.println("\n==== LISTA DE CONSULTAS CADASTRADAS ====");
-
                 List<Consulta> lista = consultaService.listarTodasConsultas();
                 
                 if (lista.isEmpty()) {
@@ -484,8 +467,7 @@ public static void gerenciarConsultas(Scanner sc, ConsultaService consultaServic
                         System.out.println("Status: " + c.getStatus());
                         
                         // caso seja ConsultaEspecial
-                        if (c instanceof ConsultaEspecial) {
-                            ConsultaEspecial ce = (ConsultaEspecial) c;
+                        if (c instanceof ConsultaEspecial ce) {
                             String custoFormatado = String.format(java.util.Locale.forLanguageTag("pt-BR"), "R$ %.2f", ce.getCustoFinal());
                             System.out.println("Tipo: Especial (Plano: " + ce.getPlanoAplicado().getNome() + ")");
                             System.out.println("Valor Original: R$" + String.format(java.util.Locale.forLanguageTag("pt-BR"), "%.2f", c.getMedico().getCustoConsulta()));
@@ -500,21 +482,14 @@ public static void gerenciarConsultas(Scanner sc, ConsultaService consultaServic
                     }
                     System.out.println("-=-==-=-=-=-==--==---==-=--=-=--==-=-=--==-=-");
                 }
-                break;
+            }
 
-            case 3:
-                finalizarConsultaRealizada(sc, consultaService);
-            break;
+            case 3 -> finalizarConsultaRealizada(sc, consultaService);
 
-            case 4:
-                 cancelarConsultaAgendada(sc, consultaService);
-            break;
+            case 4 -> cancelarConsultaAgendada(sc, consultaService);
 
-            case 0:
-                System.out.println("Voltando ao menu principal...");
-                break;
-            default:
-                System.out.println("Opção Inválida. Tente novamente! ");
+            case 0 -> System.out.println("Voltando ao menu principal...");
+            default -> System.out.println("Opção Inválida. Tente novamente! ");
         }
     }
 }
@@ -543,7 +518,6 @@ public static void gerenciarConsultas(Scanner sc, ConsultaService consultaServic
                 System.out.print("Digite o CRM do médico desejado: ");
                 String crmMedicoStr = sc.nextLine();
                 
-                int crmMedico = Integer.parseInt(crmMedicoStr); 
                 Optional<Medico> medicoOpt = medicoService.buscarMedicoPorCrm(crmMedicoStr); 
 
                 if (medicoOpt.isEmpty()) {
@@ -863,31 +837,20 @@ public static void gerenciarConsultas(Scanner sc, ConsultaService consultaServic
 
                 switch(opcaoInternacao){
                 
-                    case 1: 
-                    
-                        registrarNovaInternacao(sc, internacaoService, pacienteService, medicoService, quartoService);
-                        break;
+                    case 1 -> registrarNovaInternacao(sc, internacaoService, pacienteService, medicoService, quartoService);
 
-                    case 2:
-                  
-                        darAltaEmInternacao(sc, internacaoService, pacienteService);
-                        break;
+                    case 2 -> darAltaEmInternacao(sc, internacaoService, pacienteService);
 
-                    case 3:
-                        cancelarInternacaoAtiva(sc, internacaoService, pacienteService);
-                        break;
+                    case 3 -> cancelarInternacaoAtiva(sc, internacaoService, pacienteService);
                     
-                    case 4:
+                    case 4 -> {
                         System.out.println("\n==== QUARTOS LIVRES ====");
                         quartoService.listarQuartosLivres().forEach(System.out::println);
-                        break;
+                    }
                     
-                    case 0:
-                        System.out.println("voltando...");
-                        break;
+                    case 0 -> System.out.println("voltando...");
                     
-                    default:
-                        System.out.println("Opção Inválida. Tente novamente!");
+                    default -> System.out.println("Opção Inválida. Tente novamente!");
 
 
                 }
@@ -933,20 +896,11 @@ public static void gerenciarConsultas(Scanner sc, ConsultaService consultaServic
         }
 
         switch (opcaoPlano) {
-            case 1:
-                cadastrarPlanoSaude(sc, planoSaudeService);
-                break;
-            case 2:
-                configurarDescontosPlano(sc, planoSaudeService);
-                break;
-            case 3:
-                listarPlanosDeSaude(planoSaudeService);
-                break;
-            case 0:
-                System.out.println("Voltando...");
-                break;
-            default:
-                System.out.println("Opção Inválida. Tente novamente!");
+            case 1 -> cadastrarPlanoSaude(sc, planoSaudeService);
+            case 2 -> configurarDescontosPlano(sc, planoSaudeService);
+            case 3 -> listarPlanosDeSaude(planoSaudeService);
+            case 0 -> System.out.println("Voltando...");
+            default -> System.out.println("Opção Inválida. Tente novamente!");
         }
     }
 
@@ -1070,7 +1024,7 @@ public static void gerenciarConsultas(Scanner sc, ConsultaService consultaServic
             
             
             boolean temDesconto = false;
-            // Percorrer todas as especialidades para ver quais tem desconto
+            //percorre todas as especialidades para ver quais tem desconto
             for (models.pessoa.medico.Especialidade especialidade : models.pessoa.medico.Especialidade.values()) {
                 double desconto = plano.getDescontoPorEspecialidade(especialidade);
                 if (desconto > 0.0) {
@@ -1086,5 +1040,233 @@ public static void gerenciarConsultas(Scanner sc, ConsultaService consultaServic
         System.out.println("=====================================");
     }
 
+
+
+
+
+
+
+
+    //RELATORIOS CASE 6
+    public static void gerenciarRelatoriosEstatisticas(Scanner sc, services.PacienteService pacienteService, services.MedicoService medicoService,
+        services.ConsultaService consultaService, services.InternacaoService internacaoService
+    ) {
+        int opcaoRelatorio = -1;
+
+        while(opcaoRelatorio != 0) {
+              System.out.println("\n=============== RELATÓRIOS E ESTATÍSTICAS ===============");
+            System.out.println("\nEscolha um Relatório:");
+                
+            System.out.println("1- Listagem de Todos os Pacientes");
+            System.out.println("2- Listagem de Todos os Médicos");
+            System.out.println("3- Consultas Agendadas por Médico");
+            System.out.println("4- Internações Ativas Atualmente");
+            System.out.println("5- Estatística: Consultas Finalizadas vs. Canceladas");
+            System.out.println("0- Voltar ao Menu Principal");
+
+        try {   
+            opcaoRelatorio = sc.nextInt();
+            sc.nextLine(); 
+        } 
+        
+        catch(java.util.InputMismatchException e) {
+            System.out.println("Erro! Entrada inválida. Por favor, digite um número.");
+            sc.nextLine();
+            opcaoRelatorio = -1;
+            continue;
+
+    }
+
+    switch(opcaoRelatorio) {
+            case 1 -> relatorioListarPacientes(pacienteService);
+            case 2 -> relatorioListarMedicos(medicoService);
+            case 3 -> relatorioConsultasPorMedico(sc, medicoService, consultaService);
+            case 4 -> relatorioInternacoesAtivas(internacaoService);
+            case 5 -> relatorioEstatisticasConsultas(consultaService);
+            case 0 -> System.out.println("Voltando...");
+            default -> System.out.println("Opção Inválida. Tente novamente!");
+            }
+        }
+    }
+
+    //RELATORIO CASE 1 - PACIENTE
+    public static void relatorioListarPacientes(services.PacienteService pacienteService) {
+        System.out.println("\n--- RELATÓRIO: TODOS OS PACIENTES CADASTRADOS ---");
+        java.util.List<models.pessoa.paciente.Paciente> pacientes = pacienteService.listarTodosPacientes();
+
+        if (pacientes.isEmpty()) {
+            System.out.println("Nenhum paciente cadastrado para relatar.");
+            return;
+        }
+        for (models.pessoa.paciente.Paciente p : pacientes) {
+        
+        if (p == null) {
+            continue;
+        }
+        
+        String tipo = (p instanceof models.pessoa.paciente.PacienteEspecial) ? "Especial" : "Comum";
+        String plano = (p instanceof models.pessoa.paciente.PacienteEspecial) 
+                                ? "  \nPlano: " + ((models.pessoa.paciente.PacienteEspecial)p).getPlanoSaude().getCodigo() 
+                                : "";
+        String internado = p.getInternacaoAtual().isPresent() ? " INTERNADO" : "";
+
+        System.out.printf("TIPO: %s | NOME: %s | CPF: %s%s%s\n", 
+            tipo, p.getNome(), p.getCpf(), plano, internado);
+        }
+        System.out.println("----------------------------------------");
+        System.out.println("Total de Pacientes: " + pacientes.size());
+    }
+
+    //RELATORIO CASE 2 - MEDICO
+    public static void relatorioListarMedicos(services.MedicoService medicoService) {
+        System.out.println("\n--- RELATÓRIO: TODOS OS MÉDICOS CADASTRADOS ---");
+        java.util.List<models.pessoa.medico.Medico> medicos = medicoService.listarTodosMedicos();
+
+        if (medicos.isEmpty()) {
+            System.out.println("Nenhum médico cadastrado para relatar.");
+            return;
+        }
+        
+        
+            java.text.NumberFormat nf = java.text.NumberFormat.getCurrencyInstance(java.util.Locale.forLanguageTag("pt-BR"));
+
+        for (models.pessoa.medico.Medico m : medicos) {
+            //lista de especialidades
+            String especialidades = m.getEspecialidades().stream()
+                .map(e -> e.getDescricao())
+                .collect(java.util.stream.Collectors.joining(", "));
+            
+            String custo = nf.format(m.getCustoConsulta());
+            
+            System.out.println("=========================================");
+            System.out.println("Nome: " + m.getNome());
+            System.out.println("CRM: " + m.getCRM());
+            System.out.println("Especialidade(s): " + (especialidades.isEmpty() ? "NENHUMA" : especialidades));
+            System.out.println("Custo Base Consulta: " + custo);
+            System.out.println("Consultas Agendadas: " + m.getAgendaConsultas().size());
+        }
+        System.out.println("=========================================");
+        System.out.println("Total de Médicos: " + medicos.size());
+    }
+
+    //RELATORIO CASE 3 - CONSULTAS POR MÉDICOS
+    public static void relatorioConsultasPorMedico(Scanner sc, services.MedicoService medicoService, services.ConsultaService consultaService){
+        System.out.println("\n--- RELATÓRIO: CONSULTAS AGENDADAS POR MÉDICO ---");
+        System.out.print("Digite o CRM do médico para ver a agenda: ");
+        String crmStr = sc.nextLine();
+
+
+         try {
+        java.util.Optional<models.pessoa.medico.Medico> medicoOpt = medicoService.buscarMedicoPorCrm(crmStr);
+
+        if (medicoOpt.isEmpty()) {
+            System.out.println("Erro! Médico com CRM " + crmStr + " não encontrado.");
+            return;
+        }
+
+        models.pessoa.medico.Medico medico = medicoOpt.get();
+        
+        //gera todas consultas AGENDADAS
+        java.util.List<models.consulta.Consulta> consultasAgendadas = medico.getAgendaConsultas().stream()
+            .filter(c -> c.getStatus() == models.consulta.ConsultaStatus.AGENDADA)
+            .collect(java.util.stream.Collectors.toList());
+
+        System.out.println("\n✅ AGENDA DE CONSULTAS DE: " + medico.getNome() + " (CRM: " + medico.getCRM() + ")");
+        System.out.println("-------------------------------------------------------");
+        
+        if (consultasAgendadas.isEmpty()) {
+            System.out.println("Nenhuma consulta AGENDADA encontrada para este médico.");
+        } else {
+            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            
+            for (models.consulta.Consulta c : consultasAgendadas) {
+                System.out.println("Data/Hora: " + c.getDataHora().format(formatter) + 
+                                   " | Paciente: " + c.getPaciente().getNome() + 
+                                   " (CPF: " + c.getPaciente().getCpf() + ")");
+            }
+        }
+        System.out.println("-------------------------------------------------------");
+
+    } catch (Exception e) {
+        System.out.println("Ocorreu um erro ao processar o relatório: " + e.getMessage());
+    }
     
+    }
+
+    //RELATORIO CASE 4 - INTERNAÇÕES ATIVAS
+    public static void relatorioInternacoesAtivas(services.InternacaoService internacaoService) {
+    System.out.println("\n--- RELATÓRIO: INTERNAÇÕES ATIVAS ---");
+    
+    //filtra apenas as internações onde a data de saída é nula (Internações Ativas)
+    java.util.List<models.internacao.Internacao> ativas = internacaoService.listarInternacoesAtivas().stream()
+        .filter(i -> i.getDataSaida() == null)
+        .collect(java.util.stream.Collectors.toList());
+
+    if (ativas.isEmpty()) {
+        System.out.println("Nenhuma internação ativa registrada neste momento.");
+        return;
+    }
+
+    java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    
+    for (models.internacao.Internacao i : ativas) {
+        System.out.println("=========================================");
+        System.out.println("Quarto: " + i.getQuarto().getNumero() + " (Tipo: " + i.getQuarto().getNumero() + ")");
+        System.out.println("Paciente: " + i.getPaciente().getNome() + " (CPF: " + i.getPaciente().getCpf() + ")");
+        System.out.println("Médico Resp.: " + i.getMedicoResponsavel().getNome() + " (CRM: " + i.getMedicoResponsavel().getCRM() + ")");
+        System.out.println("Data Entrada: " + i.getDataEntrada().format(formatter));
+        
+        // quantidade de dias internado, para um dado de gestão relevante
+        long dias = java.time.temporal.ChronoUnit.DAYS.between(i.getDataEntrada().toLocalDate(), java.time.LocalDate.now());
+        System.out.println("Dias Internado: " + dias);
+    }
+    
+    System.out.println("=========================================");
+    System.out.println("Total de Internações Ativas: " + ativas.size());
+}
+
+    //RELATORIO CASE 5 - ESTATISTICAS CONSULTAS
+    // Em Menu.java (adicione/substitua este método)
+public static void relatorioEstatisticasConsultas(services.ConsultaService consultaService) {
+    System.out.println("\n--- RELATÓRIO: ESTATÍSTICAS DE CONSULTAS ---");
+    
+    java.util.List<models.consulta.Consulta> todasConsultas = consultaService.listarTodasConsultas();
+
+    if (todasConsultas.isEmpty()) {
+        System.out.println("Nenhuma consulta registrada (agendada, concluída ou cancelada).");
+        return;
+    }
+    
+    //contagem total
+    long total = todasConsultas.size();
+    
+    //contagem por status usando o Enum CONCLUIDA
+    long concluidas = todasConsultas.stream()
+        .filter(c -> c.getStatus() == models.consulta.ConsultaStatus.CONCLUIDA)
+        .count();
+        
+    long canceladas = todasConsultas.stream()
+        .filter(c -> c.getStatus() == models.consulta.ConsultaStatus.CANCELADA)
+        .count();
+
+    long agendadas = todasConsultas.stream()
+        .filter(c -> c.getStatus() == models.consulta.ConsultaStatus.AGENDADA)
+        .count();
+        
+    //cálculos de porcentagem
+    double percConcluidas = (total > 0) ? (double) concluidas / total * 100 : 0.0;
+    double percCanceladas = (total > 0) ? (double) canceladas / total * 100 : 0.0;
+    double percAgendadas = (total > 0) ? (double) agendadas / total * 100 : 0.0;
+    
+
+    System.out.println("================== RESULTADOS ===================");
+    System.out.printf("  Total de Consultas Registradas: %d\n", total);
+    System.out.println("-------------------------------------------------");
+    
+    System.out.printf(" Consultas **AGENDADAS** (Aguardando): %d (%.2f%%)\n", agendadas, percAgendadas);
+    System.out.printf(" Consultas **CONCLUÍDAS** (Finalizadas): %d (%.2f%%)\n", concluidas, percConcluidas);
+    System.out.printf(" Consultas **CANCELADAS** (Perdidas): %d (%.2f%%)\n", canceladas, percCanceladas);
+    System.out.println("=================================================");
+}
+
 }

@@ -1,21 +1,24 @@
 package services;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import models.pessoa.medico.Especialidade;
 import models.pessoa.medico.Medico;
+import repository.MedicoRepositoryCSV;
 
 public class MedicoService {
-    private static final String ARQUIVO_MEDICOS = "data/medicos.csv";
+    
+    
+    private final MedicoRepositoryCSV repository; 
+    private final List<Medico> todosMedicos; 
 
-    public MedicoService() {
+    
+    public MedicoService(MedicoRepositoryCSV repository) {
         new java.io.File("data").mkdirs();
+        this.repository = repository;
+
+        //carrega a lista do repositório
+        this.todosMedicos = repository.carregarMedicos(); 
     }
 
     public boolean cadastrarMedico(Medico medico){
@@ -27,113 +30,59 @@ public class MedicoService {
             return false;
         }
 
-        String especialidadesStr = "";
-
-        for(Especialidade esp : medico.getEspecialidades()){
-            especialidadesStr += esp.name() + (medico.getEspecialidades().indexOf(esp) < medico.getEspecialidades().size() - 1 ? ";" : "");
-        }
-        
-        try (PrintWriter writer = new PrintWriter(new FileWriter(ARQUIVO_MEDICOS, true))) {
-            //salvando: Nome, CPF, CRM, CustoConsulta, Especialidades
-            writer.println(medico.getNome() + "," + medico.getCpf() + "," + medico.getCRM() + "," + medico.getCustoConsulta() + "," + especialidadesStr);
-            System.out.println("Médico " + medico.getNome() + " cadastrado com sucesso!");
-            return true;
-        } catch (IOException e) {
-            System.out.println("Erro ao salvar médico no arquivo: " + e.getMessage());
+        //verifica se o médico já existe na lista em memória
+        if (this.todosMedicos.stream().anyMatch(m -> m.getCRM() == medico.getCRM() || m.getCpf().equals(medico.getCpf()))) {
+            System.out.println("Erro! Médico com este CRM ou CPF já cadastrado.");
             return false;
         }
+
+        this.todosMedicos.add(medico);
+
+        //salva a lista completa através do Repositório
+        repository.salvarMedicos(this.todosMedicos);
+        
+        System.out.println("Médico " + medico.getNome() + " cadastrado com sucesso!");
+        return true;
     }
     
-    // NOVO: Método para ler todos os médicos do arquivo CSV
+    // MÉTODO LISTAR
     public List<Medico> listarTodosMedicos() {
-        List<Medico> medicos = new ArrayList<>();
-        
-        try (BufferedReader reader = new BufferedReader(new FileReader(ARQUIVO_MEDICOS))) {
-            String linha;
-            while ((linha = reader.readLine()) != null) {
-                String[] dados = linha.trim().split(",");
-                
-                // Estrutura do CSV: Nome[0], CPF[1], CRM[2], Custo[3], Especialidades[4]
-                if (dados.length >= 5) {
-                    try {
-                        String nome = dados[0].trim();
-                        String cpf = dados[1].trim();
-                        int crm = Integer.parseInt(dados[2].trim());
-                        double custoConsulta = Double.parseDouble(dados[3].trim());
-                        
-                        List<Especialidade> especialidadesLidas = new ArrayList<>();
-                        Especialidade primeiraEspecialidade = null;
-                        
-                        // Processa especialidades
-                        if (!dados[4].trim().isEmpty()) {
-                            String[] espArray = dados[4].split(";");
-                            for (String espStr : espArray) {
-                                try {
-                                    Especialidade esp = Especialidade.valueOf(espStr.trim());
-                                    especialidadesLidas.add(esp);
-                                    if (primeiraEspecialidade == null) {
-                                        primeiraEspecialidade = esp;
-                                    }
-                                } catch (IllegalArgumentException e) {
-                                    // Ignora especialidades inválidas
-                                }
-                            }
-                        }
-                        
-                        if (primeiraEspecialidade != null) {
-                            Medico medico = new Medico(nome, cpf, crm, primeiraEspecialidade, custoConsulta);
-                            // Adiciona as especialidades secundárias
-                            for (int i = 1; i < especialidadesLidas.size(); i++) {
-                                medico.adicionarEspecialidade(especialidadesLidas.get(i));
-                            }
-                            medicos.add(medico);
-                        }
-                        
-                    } catch (NumberFormatException e) {
-                        System.err.println("Aviso: Linha inválida no arquivo de médicos (CRM ou Custo não é número): " + linha);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            // Se o arquivo não existe, retorna lista vazia (comportamento esperado)
-        } 
-        
-        return medicos;
+        return new ArrayList<>(this.todosMedicos);
     }
     
-    //método para buscar por CRM
+    // método para buscar por CRM 
     public Optional<Medico> buscarMedicoPorCrm(String crmBuscado) {
 
         try {
             int crm = Integer.parseInt(crmBuscado.trim());
-            return listarTodosMedicos().stream()
-                       .filter(m -> m.getCRM() == crm)
-                       .findFirst();
-                       
+            return this.todosMedicos.stream()
+                           .filter(m -> m.getCRM() == crm)
+                           .findFirst();
+                           
         } catch (NumberFormatException e) {
             return Optional.empty();
         }
     }
     
-    //método para buscar por CPF
+    // método para buscar por CPF 
     public Optional<Medico> buscarMedicoPorCpf(String cpfBuscado) {
         String cpf = cpfBuscado.trim();
-        return listarTodosMedicos().stream()
-                   .filter(m -> m.getCpf().equals(cpf))
-                   .findFirst();
+        return this.todosMedicos.stream()
+                       .filter(m -> m.getCpf().equals(cpf))
+                       .findFirst();
     }
 
 
-    //método para filtrar por especialidade.
+    // método para filtrar por especialidade 
     public List<Medico> listarMedicosPorEspecialidade(String especialidade) {
      
         List<Medico> medicosFiltrados = new ArrayList<>();
      
         String especialidadeBusca = especialidade.trim().toUpperCase(); 
         
-        for (Medico medico : listarTodosMedicos()) { 
+        for (Medico medico : this.todosMedicos) { 
             boolean temEspecialidade = medico.getEspecialidades().stream()
-                                            .anyMatch(e -> e.name().equals(especialidadeBusca));
+                                             .anyMatch(e -> e.name().equals(especialidadeBusca));
             
             if (temEspecialidade) {
                 medicosFiltrados.add(medico);

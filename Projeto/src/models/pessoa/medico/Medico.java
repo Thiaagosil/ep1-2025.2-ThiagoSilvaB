@@ -7,34 +7,34 @@ import models.pessoa.Pessoa;
 
 
 public class Medico extends Pessoa {
-    private int crm;
+    private int CRM;
     private List<Especialidade> especialidades;
-    private double CustoConsulta;
+    private double custoConsulta; 
     
     private final List<Consulta> agendaConsultas; 
 
 
-    public Medico(String nome, String cpf, int CRM, Especialidade especialidade, double CustoConsulta) {
+    public Medico(String nome, String cpf, int CRM, Especialidade especialidade, double custoConsulta) {
         
         super(nome, cpf);
-        this.crm = CRM;
+        this.CRM = CRM;
 
         this.especialidades = new ArrayList<>();
         this.especialidades.add(especialidade);
 
-        this.CustoConsulta = CustoConsulta;
+        this.custoConsulta = custoConsulta;
         
-        //inicializa a lista de consultas
+        // inicializa a lista de consultas
         this.agendaConsultas = new ArrayList<>();
 
     }
     
-    //adiciona Especialidade
+    // adiciona Especialidade
     public void adicionarEspecialidade(Especialidade especialidade){
         this.especialidades.add(especialidade);
     }
 
-        //adiciona consulta na agenda.
+    // adiciona consulta na agenda.
     public void adicionarConsulta(Consulta consulta){
         this.agendaConsultas.add(consulta);
     }
@@ -43,19 +43,19 @@ public class Medico extends Pessoa {
     // Getters e Setters
 
     public int getCRM() {
-        return crm;
+        return CRM;
     }
 
     public void setCRM(int CRM) {
-        this.crm = CRM;
+        this.CRM = CRM;
     }
 
     public double getCustoConsulta(){
-        return CustoConsulta;
+        return custoConsulta;
     }
 
-    public void setCustoConsulta(double CustoConsulta){
-        this.CustoConsulta = CustoConsulta;
+    public void setCustoConsulta(double custoConsulta){
+        this.custoConsulta = custoConsulta;
     }
 
 
@@ -68,4 +68,7 @@ public class Medico extends Pessoa {
         return new ArrayList<>(this.agendaConsultas);
     }
 
+    public void setEspecialidades(List<Especialidade> especialidades) {
+        this.especialidades = especialidades;
+    }
 }

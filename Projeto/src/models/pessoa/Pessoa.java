@@ -2,7 +2,7 @@ package models.pessoa;
 
 public class Pessoa {
     private String nome;
-    private String cpf;
+    final private String cpf;
 
 
     public Pessoa(String nome, String CPF){
@@ -20,9 +20,6 @@ public class Pessoa {
         return nome;
     }
 
-    public void setCpf(String CPF){
-        this.cpf = CPF;
-    }
 
     public String getCpf(){
         return cpf;

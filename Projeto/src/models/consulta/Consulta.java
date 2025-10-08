@@ -6,9 +6,9 @@ import models.pessoa.paciente.Paciente;
 
 public class Consulta {
 
-private Paciente paciente;
-    private Medico medico;
-    private LocalDateTime dataHora;
+    private final Paciente paciente;
+    private final Medico medico;
+    private final LocalDateTime dataHora;
     private ConsultaStatus status;
     private String diagnostico;
     private String prescricao;

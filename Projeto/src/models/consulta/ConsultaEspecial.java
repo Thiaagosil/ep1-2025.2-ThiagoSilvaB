@@ -14,7 +14,6 @@ public class ConsultaEspecial extends Consulta{
     private double custoFinal;
 
 
-
     public ConsultaEspecial(PacienteEspecial paciente, Medico medico, LocalDateTime dataHora, PlanosDeSaude plano){
         super(paciente, medico, dataHora);
 
@@ -34,11 +33,11 @@ public class ConsultaEspecial extends Consulta{
         double custoBase = this.getMedico().getCustoConsulta();
 
         double percentualDescontoTotal = 0.0;
-       
+        
         if (!this.getMedico().getEspecialidades().isEmpty()) {
             Especialidade especialidadePrincipal = this.getMedico().getEspecialidades().get(0);
             
-      
+     
             PacienteEspecial pacienteEspecial = (PacienteEspecial)this.getPaciente();
             percentualDescontoTotal = pacienteEspecial.descontoPorEspecialidade(especialidadePrincipal);
         }
@@ -56,6 +55,10 @@ public class ConsultaEspecial extends Consulta{
     public PlanosDeSaude getPlanoAplicado() {
         return planoAplicado;
     }
+    
+    public PlanosDeSaude getPlanoSaude() {
+        return planoAplicado;
+    }
 
     public double getValorDesconto() {
         return valorDesconto;
@@ -64,6 +67,4 @@ public class ConsultaEspecial extends Consulta{
     public double getCustoFinal() {
         return custoFinal;
     }
-
-
 }
