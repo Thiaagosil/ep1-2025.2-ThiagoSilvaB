@@ -29,8 +29,8 @@ public class ConsultaService {
             .anyMatch(c -> c.getDataHora().isEqual(dataHora)); 
         
         if (temConflito) {
-            throw new IllegalArgumentException("O médico " + medico.getNome() + 
-                                               " já possui uma consulta agendada para este horário: " + dataHora);
+            throw new IllegalArgumentException("O médico " + medico.getNome() + " já possui uma consulta agendada para este horário: " + dataHora);
+                                               
         }
     }
 

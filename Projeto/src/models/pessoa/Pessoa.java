@@ -2,12 +2,12 @@ package models.pessoa;
 
 public class Pessoa {
     private String nome;
-    private String CPF;
+    private String cpf;
 
 
     public Pessoa(String nome, String CPF){
         this.nome = nome;
-        this.CPF = CPF;
+        this.cpf = CPF;
     }
 
     //setters e getters
@@ -21,11 +21,11 @@ public class Pessoa {
     }
 
     public void setCpf(String CPF){
-        this.CPF = CPF;
+        this.cpf = CPF;
     }
 
     public String getCpf(){
-        return CPF;
+        return cpf;
     }
 
 

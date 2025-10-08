@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional; 
 import java.util.Scanner;
-
 import models.PlanosSaude.PlanoEspecial;
 import models.PlanosSaude.PlanosDeSaude;
 import models.consulta.Consulta;
@@ -28,18 +27,17 @@ public class Menu {
     public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(System.in);
 
+      //planos <> descontos
+        PlanoSaudeService planoSaudeService = new PlanoSaudeService();
+        PacienteService pacienteService = new PacienteService(planoSaudeService);
         
-        PacienteService pacienteService = new PacienteService();
         MedicoService medicoService = new MedicoService();
         ConsultaService consultaService = new ConsultaService(pacienteService, medicoService);
         
-        //serviços
+        // serviços
         QuartoService quartoService = new QuartoService();
         InternacaoService internacaoService = new InternacaoService(quartoService);
 
-        PlanoSaudeService planoSaudeService = new PlanoSaudeService();
-
-        
         int opcao = -1;
 
         while(opcao != 0){
@@ -84,9 +82,9 @@ public class Menu {
                     gerenciarPlanoSaude(sc, planoSaudeService);
                 break;
 
-                // case 6:
-                //     gerenciarPacientes(sc, pacientes);
-                //     break;
+                case 6:
+                   // gerenciarRelatoriosEstatisticas(sc, pacienteService, medicoService, consultaService, internacaoService);
+                break;
 
                 case 7:
                     gerenciarHistorico(sc, pacienteService);
@@ -106,6 +104,10 @@ public class Menu {
         sc.close();
    }
 
+
+
+
+   
 
     //historico paciente
     public static void gerenciarHistorico(Scanner sc, PacienteService pacienteService){
@@ -229,7 +231,40 @@ public class Menu {
                 
                 //paciente especial
                 case 2:
-                 System.out.println("...");
+                 try{
+                    System.out.println("\n================= CADASTRO DE PACIENTE (Especial) =================");
+                    
+                    System.out.print("\nNome do Paciente: ");
+                    String nome = sc.nextLine();
+                    System.out.print("\nCPF: ");
+                    String cpf = sc.nextLine();
+                    System.out.print("\nIdade: ");
+                    int idade = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.println("\n--- VINCULAR PLANO DE SAÚDE ---");
+                    System.out.print("Digite o código do Plano de Saúde: ");
+                    String codigoPlano = sc.nextLine();
+
+                    pacienteService.cadastrarPacienteEspecial(nome, cpf, idade, codigoPlano);
+
+                    System.out.println("\n Paciente ESPECIAL cadastrado com sucesso e VINCULADO ao plano " + codigoPlano + "!");
+                
+
+
+                } 
+                catch(java.util.InputMismatchException e){
+                    System.out.println("Erro! Entrada inválida. Por favor, digite um número para a idade.");
+                    sc.nextLine(); 
+                } 
+                catch(Exception e){
+                    System.out.println("Erro ao cadastrar paciente especial: " + e.getMessage());
+
+                }
+                
+                
+                
+                
                 break;
 
                 //listagem de pacientes
@@ -879,38 +914,39 @@ public static void gerenciarConsultas(Scanner sc, ConsultaService consultaServic
     public static void gerenciarPlanoSaude(Scanner sc, PlanoSaudeService planoSaudeService){
         int opcaoPlano = -1;
 
-    while (opcaoPlano != 0) {
+     while (opcaoPlano != 0) {
         System.out.println("\n=============== GERENCIAR PLANOS DE SAÚDE ===============");
-        System.out.println("Escolha uma Opção:");
-        System.out.println("1 - Cadastrar Novo Plano");
-        System.out.println("2 - Configurar Descontos por Especialidade");
-        System.out.println("3 - Listar Planos Cadastrados");
-        System.out.println("0 - Voltar ao Menu Principal");
+        System.out.println("\nEscolha uma Opção:");
+        System.out.println("1- Cadastrar Novo Plano (Comum/Especial)");
+        System.out.println("2- Configurar Descontos por Especialidade (Novo)");
+        System.out.println("3- Listar Planos de Saúde");
+        System.out.println("0- Voltar ao Menu Principal");
         
         try {
             opcaoPlano = sc.nextInt();
-            sc.nextLine(); // Consumir a linha pendente
-
-            switch (opcaoPlano) {
-                case 1:
-                    cadastrarPlanoSaude(sc, planoSaudeService); 
-                    break;
-                case 2:
-                    //configurarDescontosPlano(sc, planoSaudeService);
-                    break;
-                case 3:
-                    listarPlanosDeSaude(planoSaudeService); 
-                    break;
-                case 0:
-                    System.out.println("Voltando ao Menu Principal...");
-                    break;
-                default:
-                    System.out.println("Opção Inválida. Tente novamente!");
-            }
-        } catch (java.util.InputMismatchException e) {
-            System.out.println("Erro! Entrada inválida. Por favor, digite um número válido.");
             sc.nextLine(); 
+        } catch (java.util.InputMismatchException e) {
+            System.out.println("Erro! Entrada inválida. Por favor, digite um número.");
+            sc.nextLine();
             opcaoPlano = -1;
+            continue;
+        }
+
+        switch (opcaoPlano) {
+            case 1:
+                cadastrarPlanoSaude(sc, planoSaudeService);
+                break;
+            case 2:
+                configurarDescontosPlano(sc, planoSaudeService);
+                break;
+            case 3:
+                listarPlanosDeSaude(planoSaudeService);
+                break;
+            case 0:
+                System.out.println("Voltando...");
+                break;
+            default:
+                System.out.println("Opção Inválida. Tente novamente!");
         }
     }
 
@@ -919,7 +955,7 @@ public static void gerenciarConsultas(Scanner sc, ConsultaService consultaServic
  
  
  
-    //cadastro de PLano de Saúde
+    //case 1 (Planos de saude) - cadastro de PLano de Saúde
     public static void cadastrarPlanoSaude(Scanner sc, PlanoSaudeService planoSaudeService){
         System.out.println("\n--- CADASTRO DE PLANO DE SAÚDE ---");
         sc.nextLine();
@@ -970,8 +1006,47 @@ public static void gerenciarConsultas(Scanner sc, ConsultaService consultaServic
     }
 }
 
+    //case 2 (Planos de Saude) - Configurar Planos
 
-    //Listar planos de saude
+        public static void configurarDescontosPlano(Scanner sc, PlanoSaudeService planoSaudeService) {
+        System.out.println("\n--- CONFIGURAR DESCONTOS POR ESPECIALIDADE ---");
+        System.out.print("Digite o código do Plano de Saúde a ser configurado: ");
+        String codigoPlano = sc.nextLine();
+
+        try {
+            //exibe as especialidades
+            System.out.println("\nEspecialidades disponíveis (Digite o NOME exato):");
+            
+            for (models.pessoa.medico.Especialidade esp : models.pessoa.medico.Especialidade.values()) {
+                System.out.println("- " + esp.name());
+            }
+
+            System.out.print("\nDigite o NOME da Especialidade para o desconto: ");
+            String nomeEspecialidade = sc.nextLine().toUpperCase();
+            
+            //converte a string para o Enum 
+            models.pessoa.medico.Especialidade especialidade = models.pessoa.medico.Especialidade.valueOf(nomeEspecialidade);
+
+            System.out.print("Digite a porcentagem de desconto (exemplo : 0.1 para 10%, 0.25 para 25%): ");
+            double desconto = sc.nextDouble();
+            sc.nextLine(); 
+
+            //chama o serviço para aplicar o desconto e persistir
+            planoSaudeService.configurarDesconto(codigoPlano, especialidade, desconto);
+            
+            System.out.println("\n DESCONTO CONFIGURADO COM SUCESSO!");
+            System.out.printf("O desconto de %.0f%% foi aplicado para a especialidade %s no Plano %s.\n", 
+                desconto * 100, especialidade.name(), codigoPlano);
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro na configuração: " + e.getMessage());
+        } catch (java.util.InputMismatchException e) {
+            System.out.println("Erro! Entrada inválida. Por favor, digite um número (Ex: 0.1) para o desconto.");
+            sc.nextLine();
+        }
+    }
+
+    //case 3 (Planos de Saude) - Listar planos de saude
     public static void listarPlanosDeSaude(PlanoSaudeService planoSaudeService) {
         System.out.println("\n--- PLANOS DE SAÚDE CADASTRADOS ---");
         java.util.List<models.PlanosSaude.PlanosDeSaude> planos = planoSaudeService.listarPlanos();
@@ -1011,6 +1086,5 @@ public static void gerenciarConsultas(Scanner sc, ConsultaService consultaServic
         System.out.println("=====================================");
     }
 
-
-
+    
 }

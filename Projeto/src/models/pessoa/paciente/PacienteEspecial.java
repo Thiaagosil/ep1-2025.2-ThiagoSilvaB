@@ -33,7 +33,7 @@ public class PacienteEspecial extends Paciente {
         double descontoBase = this.planosDeSaude.getDescontoPorEspecialidade(especialidade);
         
         //quando o paciente tiver mais ou 60 anos
-        if(super.getIdade() >= 60){
+        if(super.getIdade() >= 60){ 
             double descontoSenior = 0.10;
 
             return descontoBase + descontoSenior; 

@@ -1,6 +1,6 @@
 package models.pessoa.medico;
 
-public enum Especialidade {
+public enum Especialidade{
    CARDIOLOGIA("Cardiologia"),
     PEDIATRIA("Pediatria"),
     ORTOPEDIA("Ortopedia"),
@@ -17,6 +17,7 @@ public enum Especialidade {
     public String getDescricao(){
         return descricao;
     }
+
 
 
 }
