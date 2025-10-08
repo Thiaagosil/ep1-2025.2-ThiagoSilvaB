@@ -1,14 +1,14 @@
 package models.pessoa.paciente;
 
-import models.PlanosSaude.PlanosDeSaude;
+import models.PlanosSaude.PlanoDeSaude;
 import models.pessoa.medico.Especialidade;
 
 public class PacienteEspecial extends Paciente {
     
     private String condicaoEspecial;
-    private PlanosDeSaude planoSaude; 
+    private PlanoDeSaude planoSaude; 
 
-    public PacienteEspecial(String nome, String cpf, int idade, String condicaoEspecial, PlanosDeSaude planoSaude){
+    public PacienteEspecial(String nome, String cpf, int idade, String condicaoEspecial, PlanoDeSaude planoSaude){
         super(nome, cpf, idade);
         this.condicaoEspecial = condicaoEspecial; 
         this.planoSaude = planoSaude; 
@@ -43,11 +43,11 @@ public class PacienteEspecial extends Paciente {
 
 
     // Getters e setters
-    public PlanosDeSaude getPlanoSaude() { 
+    public PlanoDeSaude getPlanoSaude() { 
         return this.planoSaude;
     }
 
-    public void setPlanoSaude(PlanosDeSaude planoSaude) { 
+    public void setPlanoSaude(PlanoDeSaude planoSaude) { 
         this.planoSaude = planoSaude;
     }
 }

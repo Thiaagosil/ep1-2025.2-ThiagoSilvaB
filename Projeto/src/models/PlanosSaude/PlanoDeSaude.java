@@ -1,10 +1,11 @@
 package models.PlanosSaude;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import models.pessoa.medico.Especialidade;
 
-public class PlanosDeSaude {
+public class PlanoDeSaude {
     
     private final String nome;
     private final String codigo;
@@ -12,13 +13,13 @@ public class PlanosDeSaude {
     //vai mapear as especialidade para definir o percentual de desconto
     private final Map<Especialidade, Double> descontoPorEspecialidade;
 
-    public PlanosDeSaude(String nome, String codigo){ 
+    public PlanoDeSaude(String nome, String codigo){ 
     this.nome = nome;
     this.codigo = codigo;
     this.descontoPorEspecialidade = new HashMap<>();
 }
 
-public void AdicionarDesconto(Especialidade especialidade, double percentualDesconto){
+public void adicionarDesconto(Especialidade especialidade, double percentualDesconto){
 
     //desconto entre 0% e 100%
     if(percentualDesconto < 0.0 || percentualDesconto > 1.0){
@@ -39,7 +40,9 @@ public void AdicionarDesconto(Especialidade especialidade, double percentualDesc
         return codigo;
     }
 
-
+    public double calcularCustoInternacao(double custoBase, LocalDateTime dataEntrada, LocalDateTime dataSaida) {
+        return custoBase; 
+}
 
 
 }

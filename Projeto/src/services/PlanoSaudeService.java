@@ -3,13 +3,13 @@ package services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import models.PlanosSaude.PlanosDeSaude;
+import models.PlanosSaude.PlanoDeSaude;
 import models.pessoa.medico.Especialidade;
 import repository.PlanoSaudeRepositoryCSV;
 
 public class PlanoSaudeService {
     
-    private final List<PlanosDeSaude> planos; 
+    private final List<PlanoDeSaude> planos; 
     private final PlanoSaudeRepositoryCSV repository; 
 
     public PlanoSaudeService(PlanoSaudeRepositoryCSV repository) {
@@ -21,7 +21,7 @@ public class PlanoSaudeService {
     
 
     // método para cadastrar Planos (Comum ou Especial)
-    public void cadastrarPlano(PlanosDeSaude novoPlano) {
+    public void cadastrarPlano(PlanoDeSaude novoPlano) {
         if (this.planos.stream().anyMatch(p -> p.getCodigo().equals(novoPlano.getCodigo()))) {
             throw new IllegalArgumentException("Erro! Já existe um plano com o código: " + novoPlano.getCodigo());
         }
@@ -31,27 +31,27 @@ public class PlanoSaudeService {
     }
     
     // método para buscar plano por código (LÊ DA MEMÓRIA)
-    public Optional<PlanosDeSaude> buscarPlanoPorCodigo(String codigo) {
+    public Optional<PlanoDeSaude> buscarPlanoPorCodigo(String codigo) {
         return this.planos.stream()
             .filter(p -> p.getCodigo().equals(codigo))
             .findFirst();
     }
     
     // método para listar todos os planos (LÊ DA MEMÓRIA)
-    public List<PlanosDeSaude> listarPlanos() {
+    public List<PlanoDeSaude> listarPlanos() {
         return new ArrayList<>(this.planos);
     }
     
     // metodo para configurar Desconto por Especialidade 
     public void configurarDesconto(String codigoPlano, Especialidade especialidade, double desconto) {
-        Optional<PlanosDeSaude> planoOpt = buscarPlanoPorCodigo(codigoPlano);
+        Optional<PlanoDeSaude> planoOpt = buscarPlanoPorCodigo(codigoPlano);
 
         if (planoOpt.isEmpty()) {
             throw new IllegalArgumentException("Plano de Saúde não encontrado para o código: " + codigoPlano);
         }
 
-        PlanosDeSaude plano = planoOpt.get();
-        plano.AdicionarDesconto(especialidade, desconto); 
+        PlanoDeSaude plano = planoOpt.get();
+        plano.adicionarDesconto(especialidade, desconto); 
 
         //salva a lista completa através do Repositório
         repository.salvarPlanos(this.planos); 

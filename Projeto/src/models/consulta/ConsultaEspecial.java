@@ -1,7 +1,7 @@
 package models.consulta;
 
 import java.time.LocalDateTime;
-import models.PlanosSaude.PlanosDeSaude;
+import models.PlanosSaude.PlanoDeSaude;
 import models.pessoa.medico.Especialidade;
 import models.pessoa.medico.Medico;
 import models.pessoa.paciente.PacienteEspecial;
@@ -9,12 +9,12 @@ import models.pessoa.paciente.PacienteEspecial;
 
 public class ConsultaEspecial extends Consulta{
     
-    private PlanosDeSaude planoAplicado;
+    private PlanoDeSaude planoAplicado;
     private double valorDesconto;
     private double custoFinal;
 
 
-    public ConsultaEspecial(PacienteEspecial paciente, Medico medico, LocalDateTime dataHora, PlanosDeSaude plano){
+    public ConsultaEspecial(PacienteEspecial paciente, Medico medico, LocalDateTime dataHora, PlanoDeSaude plano){
         super(paciente, medico, dataHora);
 
 
@@ -52,11 +52,11 @@ public class ConsultaEspecial extends Consulta{
 
     
 
-    public PlanosDeSaude getPlanoAplicado() {
+    public PlanoDeSaude getPlanoAplicado() {
         return planoAplicado;
     }
     
-    public PlanosDeSaude getPlanoSaude() {
+    public PlanoDeSaude getPlanoSaude() {
         return planoAplicado;
     }
 

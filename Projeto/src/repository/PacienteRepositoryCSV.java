@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import models.PlanosSaude.PlanosDeSaude;
+import models.PlanosSaude.PlanoDeSaude;
 import models.pessoa.paciente.Paciente;
 import models.pessoa.paciente.PacienteEspecial;
 import services.PlanoSaudeService; 
@@ -75,7 +75,7 @@ public class PacienteRepositoryCSV {
                             String codigoPlano = dados[5].trim();
                             
                             // busca o Plano de Saúde pelo código para recriar o objeto PacienteEspecial
-                            Optional<PlanosDeSaude> planoOpt = planoSaudeService.buscarPlanoPorCodigo(codigoPlano);
+                            Optional<PlanoDeSaude> planoOpt = planoSaudeService.buscarPlanoPorCodigo(codigoPlano);
 
                             if (planoOpt.isPresent()) {
                                 pacientes.add(new PacienteEspecial(nome, cpf, idade, condicaoEspecial, planoOpt.get()));

@@ -3,7 +3,7 @@ package services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import models.PlanosSaude.PlanosDeSaude;
+import models.PlanosSaude.PlanoDeSaude;
 import models.pessoa.paciente.Paciente;
 import models.pessoa.paciente.PacienteEspecial;
 import repository.PacienteRepositoryCSV; 
@@ -48,7 +48,7 @@ public class PacienteService {
     }
     
     public boolean cadastrarPacienteEspecial(String nome, String cpf, int idade, String codigoPlano) {
-        Optional<PlanosDeSaude> planoOpt = planoSaudeService.buscarPlanoPorCodigo(codigoPlano);
+        Optional<PlanoDeSaude> planoOpt = planoSaudeService.buscarPlanoPorCodigo(codigoPlano);
         
         if (planoOpt.isEmpty()) {
             throw new IllegalArgumentException("Erro! Plano de Saúde com código " + codigoPlano + " não encontrado.");

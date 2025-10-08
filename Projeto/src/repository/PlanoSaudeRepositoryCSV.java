@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import models.PlanosSaude.PlanoEspecial;
-import models.PlanosSaude.PlanosDeSaude;
+import models.PlanosSaude.PlanoDeSaude;
 import models.pessoa.medico.Especialidade;
 
 public class PlanoSaudeRepositoryCSV {
@@ -16,9 +16,9 @@ public class PlanoSaudeRepositoryCSV {
     private static final String ARQUIVO_PLANOS = "data/planos.csv";
 
     // salva todos os planos
-    public void salvarPlanos(List<PlanosDeSaude> planos) {
+    public void salvarPlanos(List<PlanoDeSaude> planos) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(ARQUIVO_PLANOS, false))) {
-            for (PlanosDeSaude plano : planos) {
+            for (PlanoDeSaude plano : planos) {
                 
                 if (plano == null || plano.getNome() == null || plano.getCodigo() == null) {
                     continue; 
@@ -42,8 +42,8 @@ public class PlanoSaudeRepositoryCSV {
     }
     
     // carrega todos os planos
-    public List<PlanosDeSaude> carregarPlanos() {
-        List<PlanosDeSaude> planosCarregados = new ArrayList<>();
+    public List<PlanoDeSaude> carregarPlanos() {
+        List<PlanoDeSaude> planosCarregados = new ArrayList<>();
         new java.io.File("data").mkdirs();
         
         try (BufferedReader reader = new BufferedReader(new FileReader(ARQUIVO_PLANOS))) {
@@ -59,11 +59,11 @@ public class PlanoSaudeRepositoryCSV {
                         continue;
                     }
                     
-                    PlanosDeSaude plano;
+                    PlanoDeSaude plano;
                     if (tipo.equals("ESPECIAL")) {
                         plano = new PlanoEspecial(nome, codigo);
                     } else {
-                        plano = new PlanosDeSaude(nome, codigo);
+                        plano = new PlanoDeSaude(nome, codigo);
                     }
                     
                     // carrega os descontos
@@ -73,7 +73,7 @@ public class PlanoSaudeRepositoryCSV {
                             try {
                                 Especialidade especialidade = Especialidade.valueOf(descontoData[0].trim());
                                 double desconto = Double.parseDouble(descontoData[1].trim());
-                                plano.AdicionarDesconto(especialidade, desconto);
+                                plano.adicionarDesconto(especialidade, desconto);
                             } catch (IllegalArgumentException ignored) {
                             // ignora dados mal formatados
                             }

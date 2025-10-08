@@ -8,9 +8,9 @@ import models.internacao.Internacao;
 import models.pessoa.Pessoa;
 
 public class Paciente extends Pessoa {
-  
+ 
     private int idade;
-    private List<Consulta> historicoConsultas;
+    private final List<Consulta> historicoConsultas; 
     private final List<Internacao> historicoInternacoes;
     private Optional<Internacao> internacaoAtual;
 
@@ -24,8 +24,6 @@ public class Paciente extends Pessoa {
     
     // Getters e Setters
 
-   
-
     public int getIdade() {
         return idade;
     }
@@ -34,7 +32,7 @@ public class Paciente extends Pessoa {
         this.idade = idade;
     }
     
-    // Arrays para o histórico, com encapsulamento de listas
+    
 
     // retorna uma cópia da lista 
     public List<Consulta> getHistoricoConsultas() {
@@ -53,16 +51,12 @@ public class Paciente extends Pessoa {
         this.historicoInternacoes.add(internacao);
     }
 
-  public void setInternacaoAtual(Optional<Internacao> internacaoAtual) {
-    this.internacaoAtual = internacaoAtual;
+    public void setInternacaoAtual(Optional<Internacao> internacaoAtual) {
+        this.internacaoAtual = internacaoAtual;
     }
 
-     public Optional<Internacao> getInternacaoAtual() {
+    public Optional<Internacao> getInternacaoAtual() {
         return internacaoAtual;
-    }
-
-    public void setHistoricoConsultas(List<Consulta> historicoConsultas) {
-        this.historicoConsultas = historicoConsultas;
     }
 
     

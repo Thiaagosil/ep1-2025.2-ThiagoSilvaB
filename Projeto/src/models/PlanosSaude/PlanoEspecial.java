@@ -3,13 +3,14 @@ package models.PlanosSaude;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-public class PlanoEspecial extends PlanosDeSaude{
+public class PlanoEspecial extends PlanoDeSaude{
     
     public PlanoEspecial(String nome, String codigo){
         super(nome, codigo);
     }
 
 
+    @Override 
     public double calcularCustoInternacao(double custoBase, LocalDateTime dataEntrada, LocalDateTime dataSaida){
         
         //O chnoroUnit.days conta os dias de internações do paciente.

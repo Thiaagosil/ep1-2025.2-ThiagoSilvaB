@@ -5,7 +5,7 @@ import java.util.Locale;
 import java.util.Optional; 
 import java.util.Scanner;
 import models.PlanosSaude.PlanoEspecial;
-import models.PlanosSaude.PlanosDeSaude;
+import models.PlanosSaude.PlanoDeSaude;
 import models.consulta.Consulta;
 import models.consulta.ConsultaEspecial;
 import models.internacao.Internacao;
@@ -928,7 +928,7 @@ public static void gerenciarConsultas(Scanner sc, ConsultaService consultaServic
         int tipo = sc.nextInt();
         sc.nextLine();
 
-        PlanosDeSaude novoPlano;
+        PlanoDeSaude novoPlano;
 
             switch (tipo) {
                 case 2 -> {
@@ -936,7 +936,7 @@ public static void gerenciarConsultas(Scanner sc, ConsultaService consultaServic
                     System.out.println("Plano Especial selecionado.");
                 }
                 case 1 -> {
-                    novoPlano = new PlanosDeSaude(nome, codigo);
+                    novoPlano = new PlanoDeSaude(nome, codigo);
                     System.out.println("Plano Básico selecionado.");
                 }
                 default -> throw new IllegalArgumentException("Erro! Tipo de plano inválido.");
@@ -1003,14 +1003,14 @@ public static void gerenciarConsultas(Scanner sc, ConsultaService consultaServic
     //case 3 (Planos de Saude) - Listar planos de saude
     public static void listarPlanosDeSaude(PlanoSaudeService planoSaudeService) {
         System.out.println("\n--- PLANOS DE SAÚDE CADASTRADOS ---");
-        java.util.List<models.PlanosSaude.PlanosDeSaude> planos = planoSaudeService.listarPlanos();
+        java.util.List<models.PlanosSaude.PlanoDeSaude> planos = planoSaudeService.listarPlanos();
         
         if (planos.isEmpty()) {
             System.out.println("Nenhum plano de saúde cadastrado.");
             return;
         }
 
-        for (models.PlanosSaude.PlanosDeSaude plano : planos) {
+        for (models.PlanosSaude.PlanoDeSaude plano : planos) {
             System.out.println("=====================================");
             System.out.println("NOME: " + plano.getNome());
             System.out.println("CÓDIGO: " + plano.getCodigo());
