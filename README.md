@@ -20,16 +20,41 @@ Desenvolvimento de um sistema de gerenciamento hospitalar utilizando os conceito
 ## Instruções para Compilação e Execução
 
 1. **Compilação:**  
-   [Descrever aqui como compilar o projeto. Exemplo: `javac Main.java` ou o script usado]
+ No terminal, acesse o diretório src dentro da pasta Projeto e digite: `javac Main.java`
+  
 
-2. **Execução:**  
-   [Descrever aqui como executar o projeto. Exemplo: `java Main` ou o script usado]
+3. **Execução:**  
+  Depois de compilar, ainda no mesmo diretório (src), execute: `java Main`
 
-3. **Estrutura de Pastas:**  
-   [Descrever aqui as principais pastas do projeto]
+4. **Estrutura de Pastas:**  
+
+**projeto está dividido em pacotes principais, cada um com uma função específica:*
+
+MODELS : 
+ Contém as classes de domínio que representam as entidades do sistema, como Paciente, Medico, Consulta, Internacao e PlanoDeSaude.
+
+ REPOSITORY :
+Responsável pela persistência dos dados, realizando leitura e escrita dos arquivos CSV.
+
+
+ SERVICES :
+Agrupa a lógica de negócio do sistema.
+As classes aqui processam, validam e interligam os dados entre os repositórios e a interface.
+
+
+ UI :
+Contém a interface de interação com o usuário.
+A classe Menu.java é o ponto de entrada do sistema, exibindo as opções e controlando a navegação entre as funcionalidades.
+
+ DATA :
+Armazena os arquivos .csv usados pelo sistema (medicos.csv, pacientes.csv, etc).
+ 
+
+
+
 
 3. **Versão do JAVA utilizada:**  
-   [Descrever aqui como versão do JAVA utilizada no projeto. Sugestão: `java 21`]
+   [A versão ultilizada no projeto foi: `java 21`]
 
 ---
 
@@ -42,13 +67,16 @@ Desenvolvimento de um sistema de gerenciamento hospitalar utilizando os conceito
 ## Prints da Execução
 
 1. Menu Principal:  
-   ![Inserir Print 1](caminho/do/print1.png)
+   <img width="302" height="252" alt="image" src="https://github.com/user-attachments/assets/1ef260b0-5ff8-404e-a508-c97d7a9b9c97" />
+
 
 2. Cadastro de Médico:  
-   ![Inserir Print 2](caminho/do/print2.png)
+   <img width="407" height="426" alt="image" src="https://github.com/user-attachments/assets/f561c123-cd3a-4347-bcfa-4c23c6cbae13" />
+
 
 3. Relatório de ?:  
-   ![Inserir Print 3](caminho/do/print3.png)
+  <img width="418" height="171" alt="image" src="https://github.com/user-attachments/assets/ccfb0fca-9c36-4278-9a63-192191533c5a" />
+
 
 ---
 
