@@ -56,7 +56,7 @@ Desenvolvimento de um sistema de gerenciamento hospitalar utilizando os conceito
 
 ## Observações (Extras ou Dificuldades)
 
-- [Espaço para o aluno comentar qualquer funcionalidade extra que implementou, dificuldades enfrentadas, ou considerações importantes.]
+- A maior dificuldade foi garantir a consistência dos dados e a lógica de verificação de horários para o agendamento de consultas e quartos para internações, aplicando a persistência correta.
 
 ---
 
