@@ -86,9 +86,8 @@ public class Menu {
                     
                     case 5 -> gerenciarPlanoSaude(sc, planoSaudeService);
                     
-                    case 6 -> {
-                    }
-                    
+                    case 6 -> gerenciarRelatoriosEstatisticas(sc, pacienteService, medicoService, consultaService, internacaoService);
+                     
                     case 7 -> gerenciarHistorico(sc, pacienteService);
                     
                     case 0 -> System.out.println("Fechando o Sistema...");
