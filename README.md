@@ -60,7 +60,7 @@ Armazena os arquivos .csv usados pelo sistema (medicos.csv, pacientes.csv, etc).
 
 ## Vídeo de Demonstração
 
-- [Inserir o link para o vídeo no YouTube/Drive aqui]
+- (https://drive.google.com/drive/folders/1CPM9qS_gV_pBo4squMGCNdbbg2UWPkT8?usp=drive_link)
 
 ---
 
@@ -76,6 +76,9 @@ Armazena os arquivos .csv usados pelo sistema (medicos.csv, pacientes.csv, etc).
 
 3. Relatório de ?:  
   <img width="418" height="171" alt="image" src="https://github.com/user-attachments/assets/ccfb0fca-9c36-4278-9a63-192191533c5a" />
+
+
+ <img width="517" height="451" alt="image" src="https://github.com/user-attachments/assets/859458d8-eb6f-4179-809a-c2d74ff86580" />
 
 
 ---
