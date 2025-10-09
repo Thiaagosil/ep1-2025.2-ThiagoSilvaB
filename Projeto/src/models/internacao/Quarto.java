@@ -10,7 +10,7 @@ public class Quarto {
     public Quarto(int numero, double custoDiario){
         this.numero = numero;
         this.custoDiario = custoDiario;
-        this.estaOcupado = false; //padrao, quando estiver ocupado o set mudará
+        this.estaOcupado = false; //padrao.. quando estiver ocupado o set mudará
     }
 
     public int getNumero(){

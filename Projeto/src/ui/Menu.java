@@ -1131,7 +1131,7 @@ public static void gerenciarConsultas(Scanner sc, ConsultaService consultaServic
             java.text.NumberFormat nf = java.text.NumberFormat.getCurrencyInstance(java.util.Locale.forLanguageTag("pt-BR"));
 
         for (models.pessoa.medico.Medico m : medicos) {
-            //lista de especialidades
+            //lista de especialidadess
             String especialidades = m.getEspecialidades().stream()
                 .map(e -> e.getDescricao())
                 .collect(java.util.stream.Collectors.joining(", "));

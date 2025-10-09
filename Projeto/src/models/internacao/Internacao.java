@@ -25,7 +25,7 @@ public class Internacao {
         this.custoInternacao = custoInternacao;
         this.estaCancelada = false;
 
-         //o quarto é marcado como ocupado ao iniciar a internação
+         // quarto é marcado como ocupado ao iniciar a internação
         quarto.setEstaOcupado(true);
   }
 
