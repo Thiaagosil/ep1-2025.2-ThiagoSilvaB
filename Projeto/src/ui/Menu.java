@@ -96,7 +96,6 @@ public class Menu {
                     default -> System.out.println("Opção Inválida. Tente novamente! ");
                     
                 }
-                // gerenciarRelatoriosEstatisticas(sc, pacienteService, medicoService, consultaService, internacaoService);
             }
         }
    }
