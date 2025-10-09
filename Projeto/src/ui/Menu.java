@@ -543,7 +543,7 @@ public static void gerenciarConsultas(Scanner sc, ConsultaService consultaServic
                 System.out.println("Paciente: " + paciente.getNome());
                 System.out.println("Médico: " + medico.getNome() + " (" + medico.getEspecialidades().get(0).getDescricao() + ")");
                 System.out.println("Data/Hora: " + dataHoraConsulta.format(format));
-                
+                consultaService.agendarConsulta(paciente, medico, dataHoraConsulta);
 
 
             } 
