@@ -74,7 +74,7 @@ Armazena os arquivos .csv usados pelo sistema (medicos.csv, pacientes.csv, etc).
    <img width="407" height="426" alt="image" src="https://github.com/user-attachments/assets/f561c123-cd3a-4347-bcfa-4c23c6cbae13" />
 
 
-3. Relatório de ?:  
+3. Relatório de Médicos:  
   <img width="418" height="171" alt="image" src="https://github.com/user-attachments/assets/ccfb0fca-9c36-4278-9a63-192191533c5a" />
 
 
